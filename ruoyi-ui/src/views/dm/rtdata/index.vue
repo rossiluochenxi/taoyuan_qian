@@ -12,7 +12,7 @@
       <el-form-item label="设备编号" prop="agroLivestockIccid">
         <el-input
           v-model="queryParams.agroLivestockIccid"
-          placeholder="请输入设备编号1111122asdsa12111"
+          placeholder="请输入设备编号"
           clearable
           @keyup.enter.native="handleQuery"
         />
