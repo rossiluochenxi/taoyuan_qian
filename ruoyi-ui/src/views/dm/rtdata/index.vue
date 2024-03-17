@@ -12,7 +12,7 @@
       <el-form-item label="设备编号" prop="agroLivestockIccid">
         <el-input
           v-model="queryParams.agroLivestockIccid"
-          placeholder="请输入设备编号"
+          placeholder="请输入设备编号11111"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -174,7 +174,7 @@
     </el-row>
 
     <el-table v-loading="loading" :data="rtdataList" @selection-change="handleSelectionChange"
-      border resizable  
+      border resizable
      auto-resize="true" >
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="id" align="center" prop="id" /> -->
@@ -218,7 +218,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
