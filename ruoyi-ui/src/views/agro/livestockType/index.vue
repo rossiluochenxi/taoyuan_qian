@@ -1,10 +1,10 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="牲畜品种" prop="livestockVarieties">
+      <el-form-item label="牲畜类型" prop="livestockType">
         <el-input
-          v-model="queryParams.livestockVarieties"
-          placeholder="请输入牲畜品种"
+          v-model="queryParams.livestockType"
+          placeholder="请输入牲畜类型"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -23,7 +23,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['agro:livestockVarieties:add']"
+          v-hasPermi="['agro:livestockType:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -34,7 +34,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['agro:livestockVarieties:edit']"
+          v-hasPermi="['agro:livestockType:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -45,7 +45,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['agro:livestockVarieties:remove']"
+          v-hasPermi="['agro:livestockType:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -55,20 +55,20 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['agro:livestockVarieties:export']"
+          v-hasPermi="['agro:livestockType:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="livestockVarietiesList"
+    <el-table v-loading="loading" :data="livestockTypeList" 
     @selection-change="handleSelectionChange"
-    border resizable  
+     border resizable  
      auto-resize="true" >
 
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="主键id" align="center" prop="id" /> -->
-      <el-table-column label="牲畜品种" align="center" prop="livestockVarieties" />
+      <el-table-column label="牲畜类型" align="center" prop="livestockType" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -76,14 +76,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['agro:livestockVarieties:edit']"
+            v-hasPermi="['agro:livestockType:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['agro:livestockVarieties:remove']"
+            v-hasPermi="['agro:livestockType:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -97,11 +97,11 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改牲畜品种管理对话框 -->
+    <!-- 添加或修改牲畜类型管理对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="牲畜品种" prop="livestockVarieties">
-          <el-input v-model="form.livestockVarieties" placeholder="请输入牲畜品种" />
+        <el-form-item label="牲畜类型" prop="livestockType">
+          <el-input v-model="form.livestockType" placeholder="请输入牲畜类型" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -113,10 +113,10 @@
 </template>
 
 <script>
-import { listLivestockVarieties, getLivestockVarieties, delLivestockVarieties, addLivestockVarieties, updateLivestockVarieties } from "@/api/agro/livestockVarieties";
+import { listLivestockType, getLivestockType, delLivestockType, addLivestockType, updateLivestockType } from "@/api/agro/livestockType";
 
 export default {
-  name: "LivestockVarieties",
+  name: "LivestockType",
   data() {
     return {
       // 遮罩层
@@ -131,8 +131,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 牲畜品种管理表格数据
-      livestockVarietiesList: [],
+      // 牲畜类型管理表格数据
+      livestockTypeList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -141,15 +141,17 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        livestockVarieties: null
+        livestockType: null
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
-              livestockVarieties: [
-          { required: true, message: "牲畜品种不能为空", trigger: "blur" }
+
+        livestockType: [
+          { required: true, message: "牲畜类型不能为空", trigger: "blur" }
         ]
+      
       }
     };
   },
@@ -157,11 +159,11 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询牲畜品种管理列表 */
+    /** 查询牲畜类型管理列表 */
     getList() {
       this.loading = true;
-      listLivestockVarieties(this.queryParams).then(response => {
-        this.livestockVarietiesList = response.rows;
+      listLivestockType(this.queryParams).then(response => {
+        this.livestockTypeList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
@@ -178,7 +180,7 @@ export default {
         createBy: null,
         createTime: null,
         updateBy: null,
-        livestockVarieties: null
+        livestockType: null
       };
       this.resetForm("form");
     },
@@ -202,16 +204,16 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加牲畜品种管理";
+      this.title = "添加牲畜类型管理";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getLivestockVarieties(id).then(response => {
+      getLivestockType(id).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改牲畜品种管理";
+        this.title = "修改牲畜类型管理";
       });
     },
     /** 提交按钮 */
@@ -219,13 +221,13 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            updateLivestockVarieties(this.form).then(response => {
+            updateLivestockType(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addLivestockVarieties(this.form).then(response => {
+            addLivestockType(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -237,8 +239,8 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除牲畜品种管理编号为"' + ids + '"的数据项？').then(function() {
-        return delLivestockVarieties(ids);
+      this.$modal.confirm('是否确认删除牲畜类型管理编号为"' + ids + '"的数据项？').then(function() {
+        return delLivestockType(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -246,10 +248,24 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('agro/livestockVarieties/export', {
+      this.download('agro/livestockType/export', {
         ...this.queryParams
-      }, `livestockVarieties_${new Date().getTime()}.xlsx`)
+      }, `livestockType_${new Date().getTime()}.xlsx`)
+    },
+
+        //遍历列的所有内容，获取最宽一列的宽度
+getMaxLength (arr) {
+  return arr.reduce((acc, item) => {
+    if (item) {
+      const calcLen = this.getTextWidth(item)
+      if (acc < calcLen) {
+        acc = calcLen
+      }
     }
+    return acc
+  }, 0)
+},
+
   }
 };
 </script>
