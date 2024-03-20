@@ -1,6 +1,30 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+      <!-- <el-form-item label="养殖户id" prop="agroUserId">
+        <el-input
+          v-model="queryParams.agroUserId"
+          placeholder="请输入养殖户id"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item> -->
+      <el-form-item label="养殖户" prop="agroUserName">
+        <el-input
+          v-model="queryParams.agroUserName"
+          placeholder="请输入养殖户"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <!-- <el-form-item label="牲畜档案id" prop="agroLivestockId">
+        <el-input
+          v-model="queryParams.agroLivestockId"
+          placeholder="请输入牲畜档案id"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item> -->
       <el-form-item label="耳标" prop="agroLivestockCode">
         <el-input
           v-model="queryParams.agroLivestockCode"
@@ -25,22 +49,38 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <!-- <el-form-item label="温度" prop="temperature">
+      <!-- <el-form-item label="imei" prop="imei">
+        <el-input
+          v-model="queryParams.imei"
+          placeholder="请输入imei"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="平台设备号" prop="deviceId">
+        <el-input
+          v-model="queryParams.deviceId"
+          placeholder="请输入平台设备号"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="温度" prop="temperature">
         <el-input
           v-model="queryParams.temperature"
           placeholder="请输入温度"
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item> -->
-      <!-- <el-form-item label="步数" prop="step">
+      </el-form-item>
+      <el-form-item label="步数" prop="step">
         <el-input
           v-model="queryParams.step"
           placeholder="请输入步数"
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item> -->
+      </el-form-item>
       <el-form-item label="体重" prop="weight">
         <el-input
           v-model="queryParams.weight"
@@ -49,23 +89,23 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <!-- <el-form-item label="经度" prop="livestockLon">
+      <el-form-item label="牲畜所在经度" prop="livestockLon">
         <el-input
           v-model="queryParams.livestockLon"
-          placeholder="请输入经度"
+          placeholder="请输入牲畜所在经度"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="纬度" prop="livestockLat">
+      <el-form-item label="牲畜所在纬度" prop="livestockLat">
         <el-input
           v-model="queryParams.livestockLat"
-          placeholder="请输入纬度"
+          placeholder="请输入牲畜所在纬度"
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item> -->
-      <!-- <el-form-item label="rsrq" prop="rsrq">
+      </el-form-item>
+      <el-form-item label="rsrq" prop="rsrq">
         <el-input
           v-model="queryParams.rsrq"
           placeholder="请输入rsrq"
@@ -135,7 +175,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['dm:rtdata:add']"
+          v-hasPermi="['dm:daydata:add']"
         >新增</el-button>
       </el-col>
       <!-- <el-col :span="1.5">
@@ -146,7 +186,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['dm:rtdata:edit']"
+          v-hasPermi="['dm:daydata:edit']"
         >修改</el-button>
       </el-col> -->
       <el-col :span="1.5">
@@ -157,7 +197,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['dm:rtdata:remove']"
+          v-hasPermi="['dm:daydata:remove']"
         >删除</el-button>
       </el-col>
       <!-- <el-col :span="1.5">
@@ -167,15 +207,13 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['dm:rtdata:export']"
+          v-hasPermi="['dm:daydata:export']"
         >导出</el-button>
       </el-col> -->
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="rtdataList" @selection-change="handleSelectionChange"
-      border resizable
-     auto-resize="true" >
+    <el-table v-loading="loading" :data="daydataList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="id" align="center" prop="id" /> -->
       <el-table-column label="养殖户" align="center" prop="agroUserName" />
@@ -185,18 +223,17 @@
       <el-table-column label="温度" align="center" prop="temperature" />
       <el-table-column label="步数" align="center" prop="step" />
       <el-table-column label="体重" align="center" prop="weight" />
-      <el-table-column label="经度" align="center" prop="livestockLon" />
-      <el-table-column label="纬度" align="center" prop="livestockLat" />
-      <!-- <el-table-column label="rsrq" align="center" prop="rsrq" />
+      <!-- <el-table-column label="牲畜所在经度" align="center" prop="livestockLon" />
+      <el-table-column label="牲畜所在纬度" align="center" prop="livestockLat" />
+      <el-table-column label="rsrq" align="center" prop="rsrq" />
       <el-table-column label="ecl" align="center" prop="ecl" />
       <el-table-column label="cellid" align="center" prop="cellid" />
       <el-table-column label="snr" align="center" prop="snr" />
       <el-table-column label="rsrp" align="center" prop="rsrp" />
       <el-table-column label="pci" align="center" prop="pci" /> -->
       <el-table-column label="上传时间" align="center" prop="date" width="180">
-
         <template slot-scope="scope">
-          <span>{{  formatDate(scope.row.date) }}</span>
+          <span>{{ parseTime(scope.row.date, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
       <!-- <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -206,19 +243,19 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['dm:rtdata:edit']"
+            v-hasPermi="['dm:daydata:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['dm:rtdata:remove']"
+            v-hasPermi="['dm:daydata:remove']"
           >删除</el-button>
         </template>
       </el-table-column> -->
     </el-table>
-
+    
     <pagination
       v-show="total>0"
       :total="total"
@@ -227,7 +264,7 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改冻结数据对话框 -->
+    <!-- 添加或修改每天数据对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="耳标" prop="agroLivestockCode">
@@ -248,11 +285,11 @@
         <el-form-item label="体重" prop="weight">
           <el-input v-model="form.weight" placeholder="请输入体重" />
         </el-form-item>
-        <el-form-item label="经度" prop="livestockLon">
-          <el-input v-model="form.livestockLon" placeholder="请输入经度" />
+        <el-form-item label="牲畜所在经度" prop="livestockLon">
+          <el-input v-model="form.livestockLon" placeholder="请输入牲畜所在经度" />
         </el-form-item>
-        <el-form-item label="纬度" prop="livestockLat">
-          <el-input v-model="form.livestockLat" placeholder="请输入纬度" />
+        <el-form-item label="牲畜所在纬度" prop="livestockLat">
+          <el-input v-model="form.livestockLat" placeholder="请输入牲畜所在纬度" />
         </el-form-item>
         <el-form-item label="rsrq" prop="rsrq">
           <el-input v-model="form.rsrq" placeholder="请输入rsrq" />
@@ -276,7 +313,7 @@
           <el-date-picker clearable
             v-model="form.date"
             type="date"
-            value-format="yyyy-MM-dd "
+            value-format="yyyy-MM-dd"
             placeholder="请选择上传时间">
           </el-date-picker>
         </el-form-item>
@@ -290,10 +327,10 @@
 </template>
 
 <script>
-import { listRtdata, getRtdata, delRtdata, addRtdata, updateRtdata } from "@/api/dm/rtdata";
+import { listDaydata, getDaydata, delDaydata, addDaydata, updateDaydata } from "@/api/dm/daydata";
 
 export default {
-  name: "Rtdata",
+  name: "Daydata",
   data() {
     return {
       // 遮罩层
@@ -308,8 +345,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 冻结数据表格数据
-      rtdataList: [],
+      // 每天数据表格数据
+      daydataList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -318,9 +355,14 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
+        agroUserId: null,
+        agroUserName: null,
+        agroLivestockId: null,
         agroLivestockCode: null,
         agroLivestockIccid: null,
         agroLivestockXqiccid: null,
+        imei: null,
+        deviceId: null,
         temperature: null,
         step: null,
         weight: null,
@@ -345,30 +387,15 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询冻结数据列表 */
+    /** 查询每天数据列表 */
     getList() {
       this.loading = true;
-      listRtdata(this.queryParams).then(response => {
-        this.rtdataList = response.rows;
+      listDaydata(this.queryParams).then(response => {
+        this.daydataList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
     },
-   formatDate(dateString) {
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    let month = date.getMonth() + 1;
-    month = month < 10 ? '0' + month : month;
-    let day = date.getDate();
-    day = day < 10 ? '0' + day : day;
-    let hours = date.getHours();
-    hours = hours < 10 ? '0' + hours : hours;
-    let minutes = date.getMinutes();
-    minutes = minutes < 10 ? '0' + minutes : minutes;
-    let seconds = date.getSeconds();
-    seconds = seconds < 10 ? '0' + seconds : seconds;
-    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-  },
     // 取消按钮
     cancel() {
       this.open = false;
@@ -425,16 +452,16 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加冻结数据";
+      this.title = "添加每天数据";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getRtdata(id).then(response => {
+      getDaydata(id).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改冻结数据";
+        this.title = "修改每天数据";
       });
     },
     /** 提交按钮 */
@@ -442,13 +469,13 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            updateRtdata(this.form).then(response => {
+            updateDaydata(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addRtdata(this.form).then(response => {
+            addDaydata(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -460,8 +487,8 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除冻结数据编号为"' + ids + '"的数据项？').then(function() {
-        return delRtdata(ids);
+      this.$modal.confirm('是否确认删除每天数据编号为"' + ids + '"的数据项？').then(function() {
+        return delDaydata(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -469,9 +496,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('dm/rtdata/export', {
+      this.download('dm/daydata/export', {
         ...this.queryParams
-      }, `rtdata_${new Date().getTime()}.xlsx`)
+      }, `daydata_${new Date().getTime()}.xlsx`)
     }
   }
 };
