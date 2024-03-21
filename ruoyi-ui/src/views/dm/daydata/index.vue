@@ -153,14 +153,25 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item> -->
-      <el-form-item label="上传时间" prop="date">
+      <!-- <el-form-item label="上传时间" prop="date">
         <el-date-picker clearable
           v-model="queryParams.date"
           type="date"
           value-format="yyyy-MM-dd"
           placeholder="请选择上传时间">
         </el-date-picker>
-      </el-form-item>
+      </el-form-item> -->
+                 <el-form-item label="创建时间">
+            <el-date-picker
+              v-model="dateRange"
+              style="width: 240px"
+              value-format="yyyy-MM-dd"
+              type="daterange"
+              range-separator="-"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+            ></el-date-picker>
+          </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -333,6 +344,8 @@ export default {
   name: "Daydata",
   data() {
     return {
+       // 日期范围
+      dateRange: [],
       // 遮罩层
       loading: true,
       // 选中数组
@@ -390,7 +403,7 @@ export default {
     /** 查询每天数据列表 */
     getList() {
       this.loading = true;
-      listDaydata(this.queryParams).then(response => {
+      listDaydata(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
         this.daydataList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -439,6 +452,7 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.dateRange = [];
       this.resetForm("queryForm");
       this.handleQuery();
     },
