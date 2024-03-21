@@ -1,14 +1,20 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+
+   <!--    @keyup.enter.native="handleQuery" -->
       <el-form-item label="养殖户" prop="agroUserName">
-        <el-input
-          v-model="queryParams.agroUserName"
-          placeholder="请输入养殖户"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.agroUserName" placeholder="请输入养殖户" clearable>
+          <el-option
+            v-for="item in userList"
+            :key="item.name"
+            :label="item.name"
+            :value="item.name"
+          />
+        </el-select>
       </el-form-item>
+
+
       <el-form-item label="原始耳标" prop="code">
         <el-input
           v-model="queryParams.code"
@@ -33,23 +39,25 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+
       <el-form-item label="牲畜类型" prop="livestockType">
         <el-select v-model="queryParams.livestockType" placeholder="请选择牲畜类型" clearable>
           <el-option
-            v-for="dict in dict.type.agro_livestock_type"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
+            v-for="item in livestockTypeList"
+            :key="item.livestockType"
+            :label="item.livestockType"
+            :value="item.livestockType"
           />
         </el-select>
       </el-form-item>
+
       <el-form-item label="牲畜品种" prop="livestockVarieties">
         <el-select v-model="queryParams.livestockVarieties" placeholder="请选择牲畜品种" clearable>
           <el-option
-            v-for="dict in dict.type.agro_livestock_varieties"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
+            v-for="item in livestockVarietiesList"
+            :key="item.livestockVarieties"
+            :label="item.livestockVarieties"
+            :value="item.livestockVarieties"
           />
         </el-select>
       </el-form-item>
@@ -252,20 +260,20 @@
         <el-form-item label="牲畜类型" prop="livestockType">
           <el-select v-model="form.livestockType" placeholder="请选择牲畜类型">
             <el-option
-              v-for="dict in dict.type.agro_livestock_type"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
+              v-for="item in livestockTypeList"
+              :key="item.livestockType"
+              :label="item.livestockType"
+              :value="item.livestockType"
             ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="牲畜品种" prop="livestockVarieties">
           <el-select v-model="form.livestockVarieties" placeholder="请选择牲畜品种">
             <el-option
-              v-for="dict in dict.type.agro_livestock_varieties"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
+              v-for="item in livestockVarietiesList"
+              :key="item.livestockVarieties"
+              :label="item.livestockVarieties"
+              :value="item.livestockVarieties"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -326,12 +334,19 @@
 <script>
 import { listLivestock, getLivestock, delLivestock, addLivestock, updateLivestock } from "@/api/agro/livestock";
 import { listUser} from "@/api/agro/user";
+import { listLivestockType} from "@/api/agro/livestockType";
+import { listLivestockVarieties} from "@/api/agro/livestockVarieties";
 
 export default {
   name: "Livestock",
   dicts: ['agro_livestock_varieties', 'agro_livestock_type', 'agro_is_insure'],
   data() {
     return {
+      //牲畜品种集合
+      livestockVarietiesList:[],
+
+      //牲畜类型集合
+      livestockTypeList:[],
       userList: [],
       // 遮罩层
       loading: true,
@@ -391,6 +406,8 @@ export default {
   created() {
     this.getList();
     this.getUserList();
+    this.getlivestockTypeList();
+    this.getlivestockVarietiesList();
   },
   methods: {
     /** 查询牲畜档案管理列表 */
@@ -502,10 +519,33 @@ export default {
         listUser().then( res => {
             if( res.code != 200){ return this.message("系统错误,请重新查询") }
           this.userList = res.rows
-          console.log(this.userLis+"============"+ res.rows);
+          // console.log(this.userLis+"============"+ res.rows);
               }
               )
     },
+             /**
+          * 获取牲畜类型信息
+          */
+        getlivestockTypeList(){
+        listLivestockType().then( res => {
+            if( res.code != 200){ return this.message("系统错误,请重新查询") }
+          this.livestockTypeList = res.rows
+          console.log(this.livestockTypeList+"============"+ res.rows);
+              }
+              )
+    },
+           /**
+          * 获取牲畜品种信息
+          */
+        getlivestockVarietiesList(){
+          listLivestockVarieties().then( res => {
+            if( res.code != 200){ return this.message("系统错误,请重新查询") }
+          this.livestockVarietiesList = res.rows
+          console.log(this.livestockVarietiesList+"============"+ res.rows);
+              }
+              )
+    },
+
     /**
           * 赋值选中农户id
           */

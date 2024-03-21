@@ -70,6 +70,11 @@
       <!-- <el-table-column label="主键id" align="center" prop="id" /> -->
       <el-table-column label="牲畜类型" align="center" prop="livestockType" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.agro_livestock_type" :value="scope.row.livestockType"/>
+        </template>
+
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -96,7 +101,6 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
-
     <!-- 添加或修改牲畜类型管理对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
@@ -104,6 +108,7 @@
           <el-input v-model="form.livestockType" placeholder="请输入牲畜类型" />
         </el-form-item>
       </el-form>
+
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
