@@ -113,14 +113,14 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item> -->
-      <el-form-item label="上传时间" prop="date">
+      <!-- <el-form-item label="上传时间" prop="date">
         <el-date-picker clearable
           v-model="queryParams.date"
           type="date"
           value-format="yyyy-MM-dd"
           placeholder="请选择上传时间">
         </el-date-picker>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -180,7 +180,14 @@
       <!-- <el-table-column label="id" align="center" prop="id" /> -->
       <el-table-column label="养殖户" align="center" prop="agroUserName" />
       <el-table-column label="耳标" align="center" prop="agroLivestockCode" />
-      <el-table-column label="设备编号" align="center" prop="agroLivestockIccid" />
+      <!-- <el-table-column label="设备编号" align="center" prop="agroLivestockIccid" /> -->
+      <el-table-column label="设备编号" align="center" :show-overflow-tooltip="true">
+        <template slot-scope="scope">
+          <router-link :to="'/dm/rt-data/index/' + scope.row.agroLivestockIccid" class="link-type">
+            <span>{{ scope.row.agroLivestockIccid }}</span>
+          </router-link>
+        </template>
+      </el-table-column>
       <el-table-column label="项圈编号" align="center" prop="agroLivestockXqiccid" />
       <el-table-column label="温度" align="center" prop="temperature" />
       <el-table-column label="步数" align="center" prop="step" />

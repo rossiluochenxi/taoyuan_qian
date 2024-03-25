@@ -396,13 +396,18 @@ export default {
       }
     };
   },
-  created() {
-    this.getList();
+   created() {
+   const agroLivestockIccid = this.$route.params && this.$route.params.agroLivestockIccid;
+   console.log("agroLivestockIccid" + agroLivestockIccid);
+   this.getList(agroLivestockIccid);
   },
   methods: {
     /** 查询每天数据列表 */
-    getList() {
-      this.loading = true;
+    getList(agroLivestockIccid) {
+          this.loading = true;
+          this.queryParams.agroLivestockIccid = agroLivestockIccid;
+          console.log("agroLivestockIccid" + this.queryParams.agroLivestockIccid);
+
       listDaydata(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
         this.daydataList = response.rows;
         this.total = response.total;
