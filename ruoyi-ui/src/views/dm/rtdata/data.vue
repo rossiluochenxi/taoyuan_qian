@@ -1,14 +1,6 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <!-- <el-form-item label="养殖户id" prop="agroUserId">
-        <el-input
-          v-model="queryParams.agroUserId"
-          placeholder="请输入养殖户id"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item> -->
       <el-form-item label="养殖户" prop="agroUserName">
         <el-input
           v-model="queryParams.agroUserName"
@@ -49,63 +41,47 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <!-- <el-form-item label="imei" prop="imei">
-        <el-input
-          v-model="queryParams.imei"
-          placeholder="请输入imei"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="平台设备号" prop="deviceId">
-        <el-input
-          v-model="queryParams.deviceId"
-          placeholder="请输入平台设备号"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="温度" prop="temperature">
+      <!-- <el-form-item label="温度" prop="temperature">
         <el-input
           v-model="queryParams.temperature"
           placeholder="请输入温度"
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
-      <el-form-item label="步数" prop="step">
+      </el-form-item> -->
+      <!-- <el-form-item label="步数" prop="step">
         <el-input
           v-model="queryParams.step"
           placeholder="请输入步数"
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
-      <el-form-item label="体重" prop="weight">
+      </el-form-item> -->
+      <!-- <el-form-item label="体重" prop="weight">
         <el-input
           v-model="queryParams.weight"
           placeholder="请输入体重"
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
-      <el-form-item label="牲畜所在经度" prop="livestockLon">
+      </el-form-item> -->
+      <!-- <el-form-item label="牲畜所在经度" prop="livestockLon">
         <el-input
           v-model="queryParams.livestockLon"
           placeholder="请输入牲畜所在经度"
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
-      <el-form-item label="牲畜所在纬度" prop="livestockLat">
+      </el-form-item> -->
+      <!-- <el-form-item label="牲畜所在纬度" prop="livestockLat">
         <el-input
           v-model="queryParams.livestockLat"
           placeholder="请输入牲畜所在纬度"
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
-      <el-form-item label="rsrq" prop="rsrq">
+      </el-form-item> -->
+      <!-- <el-form-item label="rsrq" prop="rsrq">
         <el-input
           v-model="queryParams.rsrq"
           placeholder="请输入rsrq"
@@ -153,25 +129,14 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item> -->
-      <!-- <el-form-item label="上传时间" prop="date">
+      <el-form-item label="上传时间" prop="date">
         <el-date-picker clearable
           v-model="queryParams.date"
           type="date"
           value-format="yyyy-MM-dd"
           placeholder="请选择上传时间">
         </el-date-picker>
-      </el-form-item> -->
-                 <el-form-item label="创建时间">
-            <el-date-picker
-              v-model="dateRange"
-              style="width: 240px"
-              value-format="yyyy-MM-dd"
-              type="daterange"
-              range-separator="-"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-            ></el-date-picker>
-          </el-form-item>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -186,7 +151,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['dm:daydata:add']"
+          v-hasPermi="['dm:data:add']"
         >新增</el-button>
       </el-col>
       <!-- <el-col :span="1.5">
@@ -197,7 +162,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['dm:daydata:edit']"
+          v-hasPermi="['dm:data:edit']"
         >修改</el-button>
       </el-col> -->
       <el-col :span="1.5">
@@ -208,7 +173,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['dm:daydata:remove']"
+          v-hasPermi="['dm:data:remove']"
         >删除</el-button>
       </el-col>
       <!-- <el-col :span="1.5">
@@ -218,13 +183,15 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['dm:daydata:export']"
+          v-hasPermi="['dm:data:export']"
         >导出</el-button>
       </el-col> -->
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="daydataList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="dataList" @selection-change="handleSelectionChange"
+    border resizable
+     auto-resize="true" >
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="id" align="center" prop="id" /> -->
       <el-table-column label="养殖户" align="center" prop="agroUserName" />
@@ -235,8 +202,8 @@
       <el-table-column label="步数" align="center" prop="step" />
       <el-table-column label="体重" align="center" prop="weight" />
       <!-- <el-table-column label="牲畜所在经度" align="center" prop="livestockLon" />
-      <el-table-column label="牲畜所在纬度" align="center" prop="livestockLat" />
-      <el-table-column label="rsrq" align="center" prop="rsrq" />
+      <el-table-column label="牲畜所在纬度" align="center" prop="livestockLat" /> -->
+      <!-- <el-table-column label="rsrq" align="center" prop="rsrq" />
       <el-table-column label="ecl" align="center" prop="ecl" />
       <el-table-column label="cellid" align="center" prop="cellid" />
       <el-table-column label="snr" align="center" prop="snr" />
@@ -254,14 +221,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['dm:daydata:edit']"
+            v-hasPermi="['dm:data:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['dm:daydata:remove']"
+            v-hasPermi="['dm:data:remove']"
           >删除</el-button>
         </template>
       </el-table-column> -->
@@ -275,7 +242,7 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改每天数据对话框 -->
+    <!-- 添加或修改全部数据对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="耳标" prop="agroLivestockCode">
@@ -338,14 +305,12 @@
 </template>
 
 <script>
-import { listDaydata, getDaydata, delDaydata, addDaydata, updateDaydata } from "@/api/dm/daydata";
+import { listData, getData, delData, addData, updateData } from "@/api/dm/data";
 
 export default {
-  name: "Daydata",
+  name: "Data",
   data() {
     return {
-       // 日期范围
-      dateRange: [],
       // 遮罩层
       loading: true,
       // 选中数组
@@ -358,8 +323,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 每天数据表格数据
-      daydataList: [],
+      // 全部数据表格数据
+      dataList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -368,14 +333,11 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        agroUserId: null,
         agroUserName: null,
         agroLivestockId: null,
         agroLivestockCode: null,
         agroLivestockIccid: null,
         agroLivestockXqiccid: null,
-        imei: null,
-        deviceId: null,
         temperature: null,
         step: null,
         weight: null,
@@ -396,20 +358,19 @@ export default {
       }
     };
   },
-   created() {
-   const agroLivestockIccid = this.$route.params && this.$route.params.agroLivestockIccid;
-   console.log("agroLivestockIccid" + agroLivestockIccid);
-   this.getList(agroLivestockIccid);
+  created() {
+    const agroLivestockIccid = this.$route.params && this.$route.params.agroLivestockIccid;
+    console.log("agroLivestockIccid" + agroLivestockIccid);
+    this.getList(agroLivestockIccid);
   },
   methods: {
-    /** 查询每天数据列表 */
+    /** 查询全部数据列表 */
     getList(agroLivestockIccid) {
-          this.loading = true;
-          this.queryParams.agroLivestockIccid = agroLivestockIccid;
-          console.log("agroLivestockIccid" + this.queryParams.agroLivestockIccid);
-
-      listDaydata(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
-        this.daydataList = response.rows;
+      this.loading = true;
+      this.queryParams.agroLivestockIccid = agroLivestockIccid;
+      console.log("agroLivestockIccid" + this.queryParams.agroLivestockIccid);
+      listData(this.queryParams).then(response => {
+        this.dataList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
@@ -457,7 +418,6 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.dateRange = [];
       this.resetForm("queryForm");
       this.handleQuery();
     },
@@ -471,16 +431,16 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加每天数据";
+      this.title = "添加全部数据";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getDaydata(id).then(response => {
+      getData(id).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改每天数据";
+        this.title = "修改全部数据";
       });
     },
     /** 提交按钮 */
@@ -488,13 +448,13 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            updateDaydata(this.form).then(response => {
+            updateData(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addDaydata(this.form).then(response => {
+            addData(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -506,8 +466,8 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除每天数据编号为"' + ids + '"的数据项？').then(function() {
-        return delDaydata(ids);
+      this.$modal.confirm('是否确认删除全部数据编号为"' + ids + '"的数据项？').then(function() {
+        return delData(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -515,9 +475,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('dm/daydata/export', {
+      this.download('dm/data/export', {
         ...this.queryParams
-      }, `daydata_${new Date().getTime()}.xlsx`)
+      }, `data_${new Date().getTime()}.xlsx`)
     }
   }
 };

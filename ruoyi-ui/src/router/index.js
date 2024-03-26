@@ -144,7 +144,7 @@ export const dynamicRoutes = [
         path: "index/:agroLivestockIccid(\\d+)",
         component: () => import("@/views/dm/rtdata/data"),
         name: "Data",
-        meta: { title: "每日数据", activeMenu: "/dm/rtdata" },
+        meta: { title: "全部数据", activeMenu: "/dm/rtdata" },
       },
     ],
   },
