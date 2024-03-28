@@ -154,7 +154,7 @@
      >
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="主键id" align="center" prop="id" /> -->
-      <el-table-column label="养殖户" align="center" prop="agroUserName" :width="flexColumnWidth('养殖户','agroUserName')"/>
+      <el-table-column label="养殖户" align="center" prop="agroUserName" :width="flexColumnWidth('养殖户','agroUserName')" />
       <el-table-column label="原始耳标" align="center" prop="code" :width="flexColumnWidth('原始耳标','code')"/>
       <el-table-column label="设备编号" align="center" prop="iccid" :width="flexColumnWidth('设备编号','iccid')"/>
       <el-table-column label="项圈编号" align="center" prop="xqIccid" :width="flexColumnWidth('项圈编号','xqIccid')"/>
@@ -233,7 +233,7 @@
     <!-- 添加或修改牲畜档案管理对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="养殖户" prop="agroUserName">
+        <el-form-item label="养殖户" prop="agroUserName" >
            <el-select v-model="form.agroUserName" filterable placeholder="请选择" @change="setId">
             <el-option
               v-for="item in userList"
@@ -343,7 +343,8 @@ export default {
   data() {
     return {
       //牲畜品种集合
-      livestockVarietiesList:[],
+      livestockVarietiesList: [],
+      userType: '',
 
       //牲畜类型集合
       livestockTypeList:[],
@@ -408,6 +409,12 @@ export default {
     this.getUserList();
     this.getlivestockTypeList();
     this.getlivestockVarietiesList();
+   const userType = sessionStorage.getItem('userType');
+     if (userType) {
+      // 如果用户类型信息存在，则更新Vue实例的userType数据
+       this.userType = userType;
+   
+    }
   },
   methods: {
     /** 查询牲畜档案管理列表 */

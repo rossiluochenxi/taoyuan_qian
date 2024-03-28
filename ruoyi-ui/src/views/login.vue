@@ -37,7 +37,16 @@
           <img :src="codeUrl" @click="getCode" class="login-code-img"/>
         </div>
       </el-form-item>
-      <el-checkbox v-model="loginForm.rememberMe" style="margin:0px 0px 25px 0px;">记住密码</el-checkbox>
+      <el-row>
+      <el-checkbox v-model="loginForm.rememberMe" style="margin-bottom: 0;">记住密码</el-checkbox>
+       <el-form-item prop="userType"  style="margin-bottom: 0;">
+        <el-radio-group v-model="userType">
+          <el-radio label="1">企业</el-radio>
+          <el-radio label="2">个人</el-radio>
+        </el-radio-group>
+      </el-form-item>
+ </el-row>
+
       <el-form-item style="width:100%;">
         <el-button
           :loading="loading"
@@ -49,7 +58,7 @@
           <span v-if="!loading">登 录</span>
           <span v-else>登 录 中...</span>
         </el-button>
-        <div style="float: right;" v-if="register">
+        <div style="float: right;" v-if="userType === '2'">
           <router-link class="link-type" :to="'/register'">立即注册</router-link>
         </div>
       </el-form-item>
@@ -71,6 +80,7 @@ export default {
   data() {
     return {
       codeUrl: "",
+      userType:"1",
       loginForm: {
         username: "",
         password: "", 
@@ -101,6 +111,13 @@ export default {
         this.redirect = route.query && route.query.redirect;
       },
       immediate: true
+    }
+  },
+   watch: {
+    userType(newVal) {
+      // 用户类型改变时保存到Session Storage
+       sessionStorage.setItem('userType', newVal);
+
     }
   },
   created() {
