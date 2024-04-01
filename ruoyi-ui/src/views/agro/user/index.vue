@@ -158,7 +158,7 @@
     />
 
     <!-- 添加或修改养殖户管理对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="500px" >
       <el-form ref="form" :model="form" :rules="rules" label-width="80px ">
         <el-form-item label="姓名" prop="name">
           <el-input v-model="form.name" placeholder="请输入姓名" />
@@ -198,9 +198,9 @@
    <el-form-item label="经纬度" prop="areaName"  >
 
  <div class="input-group">
-    <el-input placeholder="经度" :size="size" :disabled="inpDisabled" v-model="lon" class="input-with-select"></el-input>
-    <el-input placeholder="纬度" :size="size" :disabled="inpDisabled" v-model="lat" class="input-with-select"></el-input>
-    <el-button :disabled="btnDisabled" @click="initMap" icon="el-icon-location-information"></el-button>
+    <el-input placeholder="经度" :size="size" :disabled="inpDisabled" v-model="form.lon" class="input-with-select"></el-input>
+    <el-input placeholder="纬度" :size="size" :disabled="inpDisabled" v-model="form.lat" class="input-with-select"></el-input>
+    <el-button :disabled="btnDisabled" @click="onClickButton" icon="el-icon-location-information"></el-button>
   </div>
     </el-form-item>
 
@@ -218,15 +218,22 @@
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
-    
-    
-      <!-- <el-dialog  append-to-body> -->
-
-      <div id="mapDiv" ref="mapDiv" class="mapDiv">  </div>
-  
-    <!-- </el-dialog> -->
   </el-dialog>
 
+
+
+   
+   <el-dialog width="630px" height="500px"  title="用户定位" :visible.sync="innerVisible" >
+       <div  id="mapDiv" ref="mapDiv" style="width: 600px; height: 500px;" >
+        <!-- <div id="coordinates"></div> 显示坐标的元素 -->
+
+        </div>
+        <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="queding">确 定</el-button>
+        <el-button @click="quxiao">取 消</el-button>
+       
+        </span>
+   </el-dialog>
 
 
 
@@ -245,12 +252,23 @@ export default {
   dicts: ['agro_farmers_user_status'],
   data() {
     return {
+      innerVisible: false,
+      flag: false,
+      dizhiMap: '',
+      size: '11',
+      inpDisabled:false,
+      btnDisabled: false,
+      // marker: null, // 存储标记对象
+      isMarkerAdded: false, // 控制变量，确保标记只添加一次
+      // clickedPosition: null, // 存储点击位置的经纬度信息
+      
       options: pcas,
       selectedOptions: [],
       addrCodes: [],
       addrCodesSelected: [],
       // 遮罩层
       loading: true,
+   
       // 选中数组
       ids: [],
       // 非单个禁用
@@ -302,7 +320,9 @@ export default {
     this.getList();
   },
     mounted() {
+   this.$nextTick(() => {
     this.initMap();
+  });
   },
   methods: {
     /** 查询养殖户管理列表 */
@@ -324,13 +344,47 @@ export default {
        this.form.areaId= this.addrCodes[2];
        this.form.streetId = this.addrCodes[3];
     },
-
+  onClickButton() {
+    // 设置 innerVisible 和 flag 为 true
+    this.innerVisible = true;
+    this.flag = true;
+    this.initMap();
+  },
     initMap() { 
-     this.map = new AMap.Map("mapDiv", {
-        zoom: 10,
+       this.map = new AMap.Map("mapDiv", {
+        zoom: 8,
         center: [116.396, 39.919],
         resizeEnable: true
-      });
+       });
+ // 添加地图点击事件监听器
+this.map.on('click', (event) => {
+  const position = event.lnglat; // 获取点击位置的经纬度信息
+  // this.clickedPosition = position; // 更新 clickedPosition 数据
+
+  // 先判断是否已经存在标记
+  if (this.currentLocationMarker) {
+    this.currentLocationMarker.setMap(null); // 将旧标记从地图上移除
+    this.currentLocationMarker = null; // 将标记对象引用设置为null
+  }
+
+  // 添加新的标记
+  this.currentLocationMarker = new AMap.Marker({
+    position: position,
+    icon: require('@/assets/images/mark_b.png'),
+    offset: new AMap.Pixel(-12, -36), // 图标的偏移量，可以根据实际情况调整
+    map: this.map,
+    zIndex: 999 // 设置标记的层级，确保位于最上层
+  });
+
+  // console.log('点击位置经度：', position.lng);
+  // console.log('点击位置纬度：', position.lat);
+  this.form.lon = position.lng;
+  this.form.lat = position.lat;  
+  this.isMarkerAdded = true; // 标记已添加
+});
+       
+
+
     },
 
     // 取消按钮
@@ -338,6 +392,18 @@ export default {
       this.open = false;
       this.reset();
     },
+
+    // 取消按钮
+    quxiao() {
+      this.innerVisible = false;
+      // this.reset();
+    },
+
+    queding() { 
+      this.innerVisible = false;
+      //  this.reset();
+    },
+
     // 表单重置
     reset() {
       this.form = {
@@ -444,8 +510,12 @@ export default {
   align-items: center; /* 垂直居中 */
 }
 
-.mapDiv{
-  width: 100%;
-  height: 80vh;
-}
+/* .mapDiv { */
+  /* width: 100%;
+  padding-top: 100%; 
+  height: 0; 
+  position: relative;  */
+  /* width: 100%;
+ height: 100%; */
+/* } */
 </style>
