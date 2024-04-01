@@ -39,12 +39,12 @@
       </el-form-item>
       <el-row>
       <el-checkbox v-model="loginForm.rememberMe" style="margin-bottom: 0;">记住密码</el-checkbox>
-       <el-form-item prop="userType"  style="margin-bottom: 0;">
+       <!-- <el-form-item prop="userType"  style="margin-bottom: 0;">
         <el-radio-group v-model="userType">
           <el-radio label="1">企业</el-radio>
           <el-radio label="2">个人</el-radio>
         </el-radio-group>
-      </el-form-item>
+      </el-form-item> -->
  </el-row>
 
       <el-form-item style="width:100%;">
@@ -58,7 +58,7 @@
           <span v-if="!loading">登 录</span>
           <span v-else>登 录 中...</span>
         </el-button>
-        <div style="float: right;" v-if="userType === '2'">
+        <div style="float: right;" >
           <router-link class="link-type" :to="'/register'">立即注册</router-link>
         </div>
       </el-form-item>
@@ -80,7 +80,7 @@ export default {
   data() {
     return {
       codeUrl: "",
-      userType:"1",
+      // userType:"1",
       loginForm: {
         username: "",
         password: "", 
@@ -113,13 +113,13 @@ export default {
       immediate: true
     }
   },
-   watch: {
-    userType(newVal) {
-      // 用户类型改变时保存到Session Storage
-       sessionStorage.setItem('userType', newVal);
+  //  watch: {
+  //   userType(newVal) {
+  //     // 用户类型改变时保存到Session Storage
+  //      sessionStorage.setItem('userType', newVal);
 
-    }
-  },
+  //   }
+  // },
   created() {
     this.getCode();
     this.getCookie();

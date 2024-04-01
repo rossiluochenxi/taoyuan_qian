@@ -128,6 +128,7 @@
       <el-table-column label="地区" align="center" prop="areaName" />
       <el-table-column label="站点" align="center" prop="station" />
       <el-table-column label="负责人" align="center" prop="manager" />
+
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -158,18 +159,18 @@
 
     <!-- 添加或修改养殖户管理对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="80px ">
         <el-form-item label="姓名" prop="name">
           <el-input v-model="form.name" placeholder="请输入姓名" />
         </el-form-item>
         <el-form-item label="手机" prop="phone">
           <el-input v-model="form.phone" placeholder="请输入手机" />
         </el-form-item>
-        <el-form-item label="证件号码" prop="identity">
+        <el-form-item label="身份证" prop="identity">
           <el-input v-model="form.identity" placeholder="请输入证件号码" />
         </el-form-item>
         <el-form-item label="状态" prop="state">
-          <el-select v-model="form.state" placeholder="请选择状态">
+          <el-select v-model="form.state" placeholder="请选择状态" style="display: block;">
             <el-option
               v-for="dict in dict.type.agro_farmers_user_status"
               :key="dict.value"
@@ -178,35 +179,76 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注" />
-        </el-form-item>
-        <el-form-item label="地区" prop="areaName">
+
+        <!-- <el-form-item label="地区" prop="areaName">
           <el-input v-model="form.areaName" placeholder="请输入地区" />
-        </el-form-item>
+        </el-form-item> -->
+
+    <!-- <div style="margin-left: 80px;  margin-top: -10px; margin-bottom: 10px;"> -->
+    <el-form-item label="地区" prop="areaName"  >
+      <el-cascader :options="options" :props="{ checkStrictly: true, value: 'code', label: 'name' }" ref="cascaderAddr"
+      v-model="selectedOptions" @change="handleChange"  style="display: block;">
+      <template slot-scope="{ node, data }">
+        <span>{{ data.name }}</span>
+        <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
+      </template>
+    </el-cascader>
+    </el-form-item>
+         <!-- </div> -->
+   <el-form-item label="经纬度" prop="areaName"  >
+
+ <div class="input-group">
+    <el-input placeholder="经度" :size="size" :disabled="inpDisabled" v-model="lon" class="input-with-select"></el-input>
+    <el-input placeholder="纬度" :size="size" :disabled="inpDisabled" v-model="lat" class="input-with-select"></el-input>
+    <el-button :disabled="btnDisabled" @click="initMap" icon="el-icon-location-information"></el-button>
+  </div>
+    </el-form-item>
+
         <el-form-item label="站点" prop="station">
           <el-input v-model="form.station" placeholder="请输入站点" />
         </el-form-item>
         <el-form-item label="负责人" prop="manager">
           <el-input v-model="form.manager" placeholder="请输入负责人" />
         </el-form-item>
+                <el-form-item label="备注" prop="remark">
+          <el-input v-model="form.remark" placeholder="请输入备注" />
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
-    </el-dialog>
+    
+    
+      <!-- <el-dialog  append-to-body> -->
+
+      <div id="mapDiv" ref="mapDiv" class="mapDiv">  </div>
+  
+    <!-- </el-dialog> -->
+  </el-dialog>
+
+
+
+
   </div>
+
+  
 </template>
 
 <script>
 import { listUser, getUser, delUser, addUser, updateUser } from "@/api/agro/user";
+let pcas = require('@/assets/pcas-code.json');
 
 export default {
   name: "User",
+  ChinaPcaName: 'ChinaPca',
   dicts: ['agro_farmers_user_status'],
   data() {
     return {
+      options: pcas,
+      selectedOptions: [],
+      addrCodes: [],
+      addrCodesSelected: [],
       // 遮罩层
       loading: true,
       // 选中数组
@@ -233,10 +275,16 @@ export default {
         phone: null,
         identity: null,
         state: null,
-        areaName: null,
         station: null,
         manager: null,
-      },
+        areaName: null,
+        provinceId: null,
+        cityId: null,
+        areaId: null,
+        streetId: null,
+        lon: null,
+        lat: null,
+       },
       // 表单参数
       form: {},
       // 表单校验
@@ -253,6 +301,9 @@ export default {
   created() {
     this.getList();
   },
+    mounted() {
+    this.initMap();
+  },
   methods: {
     /** 查询养殖户管理列表 */
     getList() {
@@ -263,6 +314,25 @@ export default {
         this.loading = false;
       });
     },
+     handleChange(thsAreaCode) {
+       thsAreaCode = this.$refs['cascaderAddr'].getCheckedNodes()[0];
+       this.addrCodes = thsAreaCode.path;
+       this.addrCodesSelected = thsAreaCode.pathLabels;
+       this.form.areaName = this.addrCodesSelected.toString().replace(/,/g, '-');
+       this.form.provinceId= this.addrCodes[0];
+       this.form.cityId= this.addrCodes[1];
+       this.form.areaId= this.addrCodes[2];
+       this.form.streetId = this.addrCodes[3];
+    },
+
+    initMap() { 
+     this.map = new AMap.Map("mapDiv", {
+        zoom: 10,
+        center: [116.396, 39.919],
+        resizeEnable: true
+      });
+    },
+
     // 取消按钮
     cancel() {
       this.open = false;
@@ -367,3 +437,15 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.input-group {
+  display: flex; /* 使用 Flexbox 布局 */
+  align-items: center; /* 垂直居中 */
+}
+
+.mapDiv{
+  width: 100%;
+  height: 80vh;
+}
+</style>

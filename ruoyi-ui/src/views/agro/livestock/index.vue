@@ -231,10 +231,10 @@
     />
 
     <!-- 添加或修改牲畜档案管理对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body >
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="养殖户" prop="agroUserName" >
-           <el-select v-model="form.agroUserName" filterable placeholder="请选择" @change="setId">
+        <el-form-item label="养殖户" prop="agroUserName">
+           <el-select v-model="form.agroUserName" filterable placeholder="请选择" @change="setId"  >
             <el-option
               v-for="item in userList"
               :key="item.id"
@@ -242,12 +242,14 @@
               :value="item.name">
             </el-option>
           </el-select>
-         <!-- <el-input v-model="form.agroUserName" placeholder="请输入养殖户" />  -->
- <!-- <el-input  v-model="name" placeholder="请选择" :size="size" :disabled="inpDisabled" style="line-hight:40px" class="input-with-select">
-    <el-button slot="append" :disabled="btnDisabled" @click="showUserSelect" icon="el-icon-search"></el-button>
-  </el-input> -->
 
-        </el-form-item>
+      </el-form-item>
+    
+       <!-- <el-form-item label="养殖户" prop="agroUserName" v-else>
+         <el-input v-model="form.agroUserName" placeholder="请输入养殖户" :disabled="true"  /> -->
+         <!-- {{ initializeUserData()}} -->
+       <!-- </el-form-item>  -->
+
         <el-form-item label="原始耳标" prop="code">
           <el-input v-model="form.code" placeholder="请输入原始耳标" />
         </el-form-item>
@@ -344,8 +346,8 @@ export default {
     return {
       //牲畜品种集合
       livestockVarietiesList: [],
-      userType: '',
-
+      userPostType: '',
+      
       //牲畜类型集合
       livestockTypeList:[],
       userList: [],
@@ -405,16 +407,16 @@ export default {
     };
   },
   created() {
+       // 获取当前用户信息
+    this.userPostType = this.$store.state.user.roles[0];
     this.getList();
     this.getUserList();
     this.getlivestockTypeList();
     this.getlivestockVarietiesList();
-   const userType = sessionStorage.getItem('userType');
-     if (userType) {
-      // 如果用户类型信息存在，则更新Vue实例的userType数据
-       this.userType = userType;
-   
-    }
+  //  if (this.userPostType === 'common') {
+  //     this.initializeUserData();
+  //     console.log("调用了吗");
+  //     }
   },
   methods: {
     /** 查询牲畜档案管理列表 */
@@ -424,7 +426,9 @@ export default {
         this.livestockList = response.rows;
         this.total = response.total;
         this.loading = false;
+
       });
+
     },
     // 取消按钮
     cancel() {
@@ -457,6 +461,11 @@ export default {
       };
       this.resetForm("form");
     },
+    //  initializeUserData() {
+    //    this.form.agroUserName = this.$store.state.user.name;
+    //    this.form.agroUserId = this.$store.state.user.id;
+
+    // },
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
@@ -537,7 +546,7 @@ export default {
         listLivestockType().then( res => {
             if( res.code != 200){ return this.message("系统错误,请重新查询") }
           this.livestockTypeList = res.rows
-          console.log(this.livestockTypeList+"============"+ res.rows);
+          // console.log(this.livestockTypeList+"============"+ res.rows);
               }
               )
     },
@@ -548,7 +557,7 @@ export default {
           listLivestockVarieties().then( res => {
             if( res.code != 200){ return this.message("系统错误,请重新查询") }
           this.livestockVarietiesList = res.rows
-          console.log(this.livestockVarietiesList+"============"+ res.rows);
+          // console.log(this.livestockVarietiesList+"============"+ res.rows);
               }
               )
     },

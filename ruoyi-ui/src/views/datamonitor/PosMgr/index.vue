@@ -316,7 +316,6 @@
 import { listRtdata, getRtdata, delRtdata, addRtdata, updateRtdata } from "@/api/dm/rtdata";
 
 export default {
-  
   name: "Map",
   data() {
     return {
