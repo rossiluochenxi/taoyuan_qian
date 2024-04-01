@@ -136,14 +136,21 @@
 
 <script>
 import { listRtdata, getRtdata, delRtdata, addRtdata, updateRtdata } from "@/api/dm/rtdata";
+import { listUser} from "@/api/agro/user";
+
 
 export default {
   name: "Map",
 
   data() {
     return {
-      // showDataSection: true,
+      //圆心坐标
+      centerl:[],
+      //用户经纬度
+      lon: null,
+      lat: null,
 
+      userList: [],
        // 遮罩层
        loading: true,
       // 选中数组
@@ -162,6 +169,7 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
+
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -196,19 +204,71 @@ export default {
     };
   },
   mounted() {
-    this.initMap();
-  },
+    this.getUserList();
+},
   created() {
     this.getList();
+   
   },
   methods: {
+    /**
+          * 获取农户信息
+          */
+      getUserList(){
+        listUser().then( res => {
+            if( res.code != 200){ return this.message("系统错误,请重新查询") }
+   
+          this.userList = res.rows
+          this.userList.forEach(user => {
+          const lon = parseFloat(user.lon); // 将经度字符串转换为浮点数
+          const lat = parseFloat(user.lat); // 将纬度字符串转换为浮点数
+
+          // 将经纬度数据添加到 this.centerl 数组中
+          this.centerl.push({ lon, lat });
+          });
+
+            //获取设备数据
+          // 在成功获取用户列表后再初始化地图
+          this.initMap();
+
+
+          // console.log(this.userLis+"============"+ res.rows);
+       }
+         )
+    },
+    
     initMap() {
+// const coordinates = [
+//     { lon: 123.414875, lat: 41.908154 },
+//     { lon: 123.424875, lat: 40.908154 },
+//     { lon: 123.434875, lat: 39.908154 }
+// ];
+
       this.map = new AMap.Map("mapContainer", {
-        zoom: 10,
+        zoom: 8,
         center: [116.396, 39.919],
         resizeEnable: true
       });
+
+      this.centerl.forEach(coord => {
+    const circle = new AMap.Circle({
+        
+        // center: [this.lon, this.lat], // 圆心坐标
+        center: [coord.lon, coord.lat], // 圆心坐标
+
+        radius: 1000, // 半径，单位：米
+        strokeColor: "#FF33FF", // 线颜色
+        strokeOpacity: 1, // 线透明度
+        strokeWeight: 3, // 线宽
+        fillColor: "#FF99FF", // 填充颜色
+        fillOpacity: 0.35 // 填充透明度
+    });
+        // 将 Circle 添加到地图上
+        circle.setMap(this.map);
+  });
+
     },
+
     search() {
       // 执行查询操作
     },
@@ -261,6 +321,7 @@ export default {
         this.loading = false;
       });
     },
+         
    formatDate(dateString) {
     const date = new Date(dateString);
     const year = date.getFullYear();
