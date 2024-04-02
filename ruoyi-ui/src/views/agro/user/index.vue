@@ -253,7 +253,7 @@ export default {
   data() {
     return {
       innerVisible: false,
-      flag: false,
+      // flag: false,
       dizhiMap: '',
       size: '11',
       inpDisabled:false,
@@ -261,7 +261,9 @@ export default {
       // marker: null, // 存储标记对象
       isMarkerAdded: false, // 控制变量，确保标记只添加一次
       // clickedPosition: null, // 存储点击位置的经纬度信息
-      
+      mapLoaded: false, // 标志位表示地图是否已加载
+
+
       options: pcas,
       selectedOptions: [],
       addrCodes: [],
@@ -318,12 +320,11 @@ export default {
   },
   created() {
     this.getList();
+    // this.initMap();
   },
-    mounted() {
-   this.$nextTick(() => {
-    this.initMap();
-  });
-  },
+  //   mounted() {
+  //   this.getList();
+  // },
   methods: {
     /** 查询养殖户管理列表 */
     getList() {
@@ -333,6 +334,8 @@ export default {
         this.total = response.total;
         this.loading = false;
       });
+      //  this.initMap();
+
     },
      handleChange(thsAreaCode) {
        thsAreaCode = this.$refs['cascaderAddr'].getCheckedNodes()[0];
@@ -344,48 +347,50 @@ export default {
        this.form.areaId= this.addrCodes[2];
        this.form.streetId = this.addrCodes[3];
     },
-  onClickButton() {
-    // 设置 innerVisible 和 flag 为 true
-    this.innerVisible = true;
-    this.flag = true;
-    this.initMap();
-  },
-    initMap() { 
-       this.map = new AMap.Map("mapDiv", {
-        zoom: 8,
-        center: [116.396, 39.919],
-        resizeEnable: true
-       });
- // 添加地图点击事件监听器
-this.map.on('click', (event) => {
-  const position = event.lnglat; // 获取点击位置的经纬度信息
-  // this.clickedPosition = position; // 更新 clickedPosition 数据
 
-  // 先判断是否已经存在标记
-  if (this.currentLocationMarker) {
-    this.currentLocationMarker.setMap(null); // 将旧标记从地图上移除
-    this.currentLocationMarker = null; // 将标记对象引用设置为null
-  }
+    
+    onClickButton() {
+      this.innerVisible = true;
+      // this.initMap();
+      this.$nextTick(() => {
+      this.initMap();
+     });
 
-  // 添加新的标记
-  this.currentLocationMarker = new AMap.Marker({
-    position: position,
-    icon: require('@/assets/images/mark_b.png'),
-    offset: new AMap.Pixel(-12, -36), // 图标的偏移量，可以根据实际情况调整
-    map: this.map,
-    zIndex: 999 // 设置标记的层级，确保位于最上层
-  });
+},
+    initMap() {
+        this.map = new AMap.Map("mapDiv", {
+          zoom: 8,
+          center: [116.396, 39.919],
+          resizeEnable: true
+        });
+        // 添加地图点击事件监听器
+        this.map.on('click', (event) => {
+          const position = event.lnglat; // 获取点击位置的经纬度信息
+          // this.clickedPosition = position; // 更新 clickedPosition 数据
 
-  // console.log('点击位置经度：', position.lng);
-  // console.log('点击位置纬度：', position.lat);
-  this.form.lon = position.lng;
-  this.form.lat = position.lat;  
-  this.isMarkerAdded = true; // 标记已添加
-});
-       
+          // 先判断是否已经存在标记
+          if (this.currentLocationMarker) {
+            this.currentLocationMarker.setMap(null); // 将旧标记从地图上移除
+            this.currentLocationMarker = null; // 将标记对象引用设置为null
+          }
 
+          // 添加新的标记
+          this.currentLocationMarker = new AMap.Marker({
+            position: position,
+            icon: require('@/assets/images/mark_b.png'),
+            offset: new AMap.Pixel(-12, -36), // 图标的偏移量，可以根据实际情况调整
+            map: this.map,
+            zIndex: 999 // 设置标记的层级，确保位于最上层
+          });
 
-    },
+          // console.log('点击位置经度：', position.lng);
+          // console.log('点击位置纬度：', position.lat);
+          this.form.lon = position.lng;
+          this.form.lat = position.lat;
+          this.isMarkerAdded = true; // 标记已添加
+        });
+ 
+},
 
     // 取消按钮
     cancel() {
