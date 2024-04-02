@@ -144,6 +144,8 @@ export default {
 
   data() {
     return {
+      //livestock牲畜坐标
+      // livestockCoordinates:[],
       //圆心坐标
       centerl:[],
       //用户经纬度
@@ -188,7 +190,11 @@ export default {
         snr: null,
         rsrp: null,
         pci: null,
-        date: null
+        date: null,
+        phone:null,
+        agroLivestockVarieties:null,
+        agroLivestockType:null,
+
       },
       // 表单参数
       form: {},
@@ -204,16 +210,17 @@ export default {
     };
   },
   mounted() {
-    this.getUserList();
+    this.getList();
+
 },
   created() {
-    this.getList();
-   
+
   },
   methods: {
+  
     /**
           * 获取农户信息
-          */
+          */ 
       getUserList(){
         listUser().then( res => {
             if( res.code != 200){ return this.message("系统错误,请重新查询") }
@@ -228,6 +235,7 @@ export default {
           });
 
             //获取设备数据
+            // this.getList();
           // 在成功获取用户列表后再初始化地图
           this.initMap();
 
@@ -238,89 +246,167 @@ export default {
     },
     
     initMap() {
-// const coordinates = [
-//     { lon: 123.414875, lat: 41.908154 },
-//     { lon: 123.424875, lat: 40.908154 },
-//     { lon: 123.434875, lat: 39.908154 }
-// ];
-
       this.map = new AMap.Map("mapContainer", {
         zoom: 8,
-        center: [116.396, 39.919],
+        center: [123.414875, 41.908154],
         resizeEnable: true
       });
 
       this.centerl.forEach(coord => {
-    const circle = new AMap.Circle({
-        
-        // center: [this.lon, this.lat], // 圆心坐标
+        const circle = new AMap.Circle({
+      // center: [this.lon, this.lat], // 圆心坐标
         center: [coord.lon, coord.lat], // 圆心坐标
-
+        // icon: require('@/assets/images/mark_b.png'),
         radius: 1000, // 半径，单位：米
-        strokeColor: "#FF33FF", // 线颜色
-        strokeOpacity: 1, // 线透明度
+        strokeColor: "#66CCFF", // 线颜色
+        strokeOpacity: 0, // 线透明度
         strokeWeight: 3, // 线宽
-        fillColor: "#FF99FF", // 填充颜色
+        fillColor: "#66CCFF", // 填充颜色
         fillOpacity: 0.35 // 填充透明度
-    });
-        // 将 Circle 添加到地图上
-        circle.setMap(this.map);
+       });
+         // 将 Circle 添加到地图上
+         circle.setMap(this.map);
   });
+       // 创建标记
+      this.rtdataList.forEach(livestockMarker => {
+          const marker = new AMap.Marker({
+              position: [parseFloat(livestockMarker.livestockLon), parseFloat(livestockMarker.livestockLat)], // 标记位置
+              icon: require('@/assets/images/calf.png'),
+              map: this.map // 所属地图实例
+              
+            });
 
+             // 添加点击事件监听器
+             marker.on('click', (event) => {
+             this.locateOnMap(livestockMarker); // 调用 locateOnMap 方法，并传递相应的信息
+            })
+  
+            //循环把点位放到地图上面
+              marker.setMap(this.map);
+
+            });      
+
+          
+  },
+    /**
+          * 冻结数据
+          */ 
+    getList() {
+      this.loading = true;
+      listRtdata(this.queryParams).then(response => {
+        this.rtdataList = response.rows;
+        this.total = response.total;
+        
+          // // 将经纬度数据添加到 this.livestockCoordinates 数组中
+          // this.rtdataList.forEach(rtdata => {
+          //       const livestockLon = parseFloat(rtdata.livestockLon); // 将经度字符串转换为浮点数
+          //       const livestockLat = parseFloat(rtdata.livestockLat); // 将纬度字符串转换为浮点数
+          //       this.livestockCoordinates.push({ livestockLon, livestockLat });
+          // });
+          this.loading = false;
+          this.getUserList();
+
+        
+      });
+
+
+
+
+
+      
     },
 
     search() {
       // 执行查询操作
     },
+
     locateOnMap(rows) {
-      this.localList = [];
-      this.localList.push([rows.livestockLon, rows.livestockLat]);
-      
-      const location = this.localList[0];
+  this.localList = [];
+  this.localList.push([rows.livestockLon, rows.livestockLat]);
+  
+  const location = this.localList[0];
 
-      if (location) {
-        const marker = new AMap.Marker({
-          position: location,
-          map: this.map
-        });
-      
-        const infoWindowContent = `
-          <div>
-            <p>养殖户：${rows.agroUserName}</p>
-            <p>电话：</p>
-            <p>牲畜标号：${rows.agroLivestockCode}</p>
-            <p>设备编号：${rows.agroLivestockIccid}</p>
-            <p>牛品种：</p>
-            <p>经度：${location[0]}</p>
-            <p>纬度：${location[1]}</p>
-          </div>
-        `;
+  if (location) {
+    const infoWindowContent = `
+      <div>
+        <p>养殖户：${rows.agroUserName}</p>
+        <p>电话：${rows.phone}</p>
+        <p>牲畜标号：${rows.agroLivestockCode}</p>
+        <p>设备编号：${rows.agroLivestockIccid}</p>
+        <p>牛品种：${rows.agroLivestockVarieties}</p>
+        <p>经度：${location[0]}</p>
+        <p>纬度：${location[1]}</p>
+      </div>
+    `;
 
-        const infoWindow = new AMap.InfoWindow({
-          content: infoWindowContent
-        });
+    const infoWindow = new AMap.InfoWindow({
+      content: infoWindowContent
+    });
 
-        infoWindow.open(this.map, location);  
-        this.map.setCenter(location);
+    infoWindow.open(this.map, location);  
+    this.map.setCenter(location);
+  }
+},
 
-        // 在地图上添加定位的小图标
-        const currentLocationMarker = new AMap.Marker({
-          position: location,
-          icon: require('@/assets/images/calf.png'),
-          offset: new AMap.Pixel(-12, -36), // 图标的偏移量，可以根据实际情况调整
-          map: this.map
-        });
-      }
-    },
 
-     getList() {
-      this.loading = true;
-      listRtdata(this.queryParams).then(response => {
-        this.rtdataList = response.rows;
-        this.total = response.total;
-        this.loading = false;
-      });
-    },
+//     locateOnMap(rows) {
+//   this.localList = [];
+//   this.localList.push([rows.livestockLon, rows.livestockLat]);
+  
+//   const location = this.localList[0];
+
+//   if (location) {
+//     const marker = new AMap.Marker({
+//       position: location,
+//       map: this.map,
+//       visible: false // 设置标记不可见
+//     });
+  
+//     const infoWindowContent = `
+//       <div>
+//         <p>养殖户：${rows.agroUserName}</p>
+//         <p>电话：${rows.phone}</p>
+//         <p>牲畜标号：${rows.agroLivestockCode}</p>
+//         <p>设备编号：${rows.agroLivestockIccid}</p>
+//         <p>牛品种：${rows.agroLivestockVarieties}</p>
+//         <p>经度：${location[0]}</p>
+//         <p>纬度：${location[1]}</p>
+//       </div>
+//     `;
+
+//     const infoWindow = new AMap.InfoWindow({
+//       content: infoWindowContent
+//     });
+
+//     infoWindow.open(this.map, location);  
+//     this.map.setCenter(location);
+//   }
+// },
+
+
+openInfoWindow(marker, rows) {
+  // 构建信息窗口内容
+  const infoWindowContent = `
+    <div>
+      <p>养殖户：${rows.agroUserName}</p>
+      <p>电话：${rows.phone}</p>
+      <p>牲畜标号：${rows.agroLivestockCode}</p>
+      <p>设备编号：${rows.agroLivestockIccid}</p>
+      <p>牛品种：${rows.agroLivestockVarieties}</p>
+      <p>经度：${marker.getPosition().getLng()}</p>
+      <p>纬度：${marker.getPosition().getLat()}</p>
+    </div>
+  `;
+
+  // 创建信息窗口并打开
+  const infoWindow = new AMap.InfoWindow({
+    content: infoWindowContent
+  });
+
+  infoWindow.open(this.map, marker);
+},
+
+   
          
    formatDate(dateString) {
     const date = new Date(dateString);
