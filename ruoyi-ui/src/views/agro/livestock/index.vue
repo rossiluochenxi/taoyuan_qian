@@ -178,7 +178,7 @@
           <span>{{ parseTime(scope.row.birthday, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="贷款日期" align="center" prop="loanDate" width="180">
+      <!-- <el-table-column label="贷款日期" align="center" prop="loanDate" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.loanDate, '{y}-{m}-{d}') }}</span>
         </template>
@@ -188,7 +188,7 @@
         <template slot-scope="scope">
           <dict-tag :options="dict.type.agro_is_insure" :value="scope.row.isInsure"/>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       
 
 
@@ -196,11 +196,11 @@
       <el-table-column label="站点" align="center" prop="station" />
 
 
-        <el-table-column label="照片" align="center" prop="image" width="100">
+        <!-- <el-table-column label="照片" align="center" prop="image" width="100">
         <template #default="scope">
           <image-preview :src="scope.row.image" :width="50" :height="50"/>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -234,7 +234,7 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body >
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="养殖户" prop="agroUserName">
-           <el-select v-model="form.agroUserName" filterable placeholder="请选择" @change="setId"  >
+           <el-select v-model="form.agroUserName" filterable placeholder="请选择" @change="setId" style="width: 100%;" >
             <el-option
               v-for="item in userList"
               :key="item.id"
@@ -260,7 +260,7 @@
           <el-input v-model="form.xqIccid" placeholder="请输入项圈编号" />
         </el-form-item>
         <el-form-item label="牲畜类型" prop="livestockType">
-          <el-select v-model="form.livestockType" placeholder="请选择牲畜类型">
+          <el-select v-model="form.livestockType" placeholder="请选择牲畜类型"style="display: block">
             <el-option
               v-for="item in livestockTypeList"
               :key="item.livestockType"
@@ -270,7 +270,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="牲畜品种" prop="livestockVarieties">
-          <el-select v-model="form.livestockVarieties" placeholder="请选择牲畜品种">
+          <el-select v-model="form.livestockVarieties" placeholder="请选择牲畜品种"style="display: block;">
             <el-option
               v-for="item in livestockVarietiesList"
               :key="item.livestockVarieties"
@@ -285,17 +285,17 @@
             type="date"
             value-format="yyyy-MM-dd"
             placeholder="请选择预计出栏日期">
-          </el-date-picker>
+          </el-date-picker style="display: block;">
         </el-form-item>
         <el-form-item label="出生日期" prop="birthday">
           <el-date-picker clearable
             v-model="form.birthday"
             type="date"
             value-format="yyyy-MM-dd"
-            placeholder="请选择出生日期">
+            placeholder="请选择出生日期" style="display: block;">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="贷款日期" prop="loanDate">
+        <!-- <el-form-item label="贷款日期" prop="loanDate">
           <el-date-picker clearable
             v-model="form.loanDate"
             type="date"
@@ -314,7 +314,7 @@
               :label="dict.value"
             >{{dict.label}}</el-radio>
           </el-radio-group>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="站点" prop="station">
           <el-input v-model="form.station" placeholder="请输入站点" />
         </el-form-item>
