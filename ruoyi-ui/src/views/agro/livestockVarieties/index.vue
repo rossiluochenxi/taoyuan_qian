@@ -26,7 +26,7 @@
           v-hasPermi="['agro:livestockVarieties:add']"
         >新增</el-button>
       </el-col>
-      <el-col :span="1.5">
+      <!-- <el-col :span="1.5">
         <el-button
           type="success"
           plain
@@ -36,8 +36,8 @@
           @click="handleUpdate"
           v-hasPermi="['agro:livestockVarieties:edit']"
         >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
+      </el-col> -->
+      <!-- <el-col :span="1.5">
         <el-button
           type="danger"
           plain
@@ -47,7 +47,7 @@
           @click="handleDelete"
           v-hasPermi="['agro:livestockVarieties:remove']"
         >删除</el-button>
-      </el-col>
+      </el-col> -->
       <el-col :span="1.5">
         <el-button
           type="warning"

@@ -1,7 +1,15 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="耳标" prop="agroLivestockCode">
+      <el-form-item label="养殖户" prop="agroUserName">
+        <el-input
+          v-model="queryParams.agroUserName"
+          placeholder="请输入养殖户"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="原始耳标" prop="agroLivestockCode">
         <el-input
           v-model="queryParams.agroLivestockCode"
           placeholder="请输入耳标"
@@ -17,14 +25,14 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="项圈编号" prop="agroLivestockXqiccid">
+      <!-- <el-form-item label="项圈编号" prop="agroLivestockXqiccid">
         <el-input
           v-model="queryParams.agroLivestockXqiccid"
           placeholder="请输入项圈编号"
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <!-- <el-form-item label="温度" prop="temperature">
         <el-input
           v-model="queryParams.temperature"
@@ -41,14 +49,14 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item> -->
-      <el-form-item label="体重" prop="weight">
+      <!-- <el-form-item label="体重" prop="weight">
         <el-input
           v-model="queryParams.weight"
           placeholder="请输入体重"
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <!-- <el-form-item label="经度" prop="livestockLon">
         <el-input
           v-model="queryParams.livestockLon"
@@ -127,8 +135,8 @@
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
+    <!-- <el-row :gutter="10" class="mb8"> -->
+      <!-- <el-col :span="1.5">
         <el-button
           type="primary"
           plain
@@ -137,7 +145,7 @@
           @click="handleAdd"
           v-hasPermi="['dm:rtdata:add']"
         >新增</el-button>
-      </el-col>
+      </el-col> -->
       <!-- <el-col :span="1.5">
         <el-button
           type="success"
@@ -149,7 +157,7 @@
           v-hasPermi="['dm:rtdata:edit']"
         >修改</el-button>
       </el-col> -->
-      <el-col :span="1.5">
+      <!-- <el-col :span="1.5">
         <el-button
           type="danger"
           plain
@@ -159,7 +167,7 @@
           @click="handleDelete"
           v-hasPermi="['dm:rtdata:remove']"
         >删除</el-button>
-      </el-col>
+      </el-col> -->
       <!-- <el-col :span="1.5">
         <el-button
           type="warning"
@@ -170,8 +178,8 @@
           v-hasPermi="['dm:rtdata:export']"
         >导出</el-button>
       </el-col> -->
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row>
+      <!-- <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar> -->
+    <!-- </el-row> -->
 
     <el-table v-loading="loading" :data="rtdataList" @selection-change="handleSelectionChange"
       border resizable
@@ -189,11 +197,20 @@
         </template>
       </el-table-column>
       <el-table-column label="项圈编号" align="center" prop="agroLivestockXqiccid" />
-      <el-table-column label="温度" align="center" prop="temperature" />
+      <el-table-column label="设备类型" align="center" prop="deviceType" />
+
+      <!-- <el-table-column label="温度" align="center" prop="temperature" /> -->
+            <el-table-column label="温度" align="center" prop="temperature">
+  <template slot-scope="scope">
+    <span :style="{ color: getTemperatureColor(scope.row.temperature) }">{{ scope.row.temperature }}</span>
+  </template>
+</el-table-column> 
+       
       <el-table-column label="步数" align="center" prop="step" />
       <el-table-column label="体重" align="center" prop="weight" />
-      <el-table-column label="经度" align="center" prop="livestockLon" />
-      <el-table-column label="纬度" align="center" prop="livestockLat" />
+      <el-table-column label="电量" align="center" prop="drycell" />
+     <!-- <el-table-column label="经度" align="center" prop="livestockLon" />
+      <el-table-column label="纬度" align="center" prop="livestockLat" /> -->
       <!-- <el-table-column label="rsrq" align="center" prop="rsrq" />
       <el-table-column label="ecl" align="center" prop="ecl" />
       <el-table-column label="cellid" align="center" prop="cellid" />
@@ -327,7 +344,10 @@ export default {
         pageSize: 10,
         agroLivestockCode: null,
         agroLivestockIccid: null,
+        agroUserName: null,
         agroLivestockXqiccid: null,
+        deviceType: null,
+        drycell: null,
         temperature: null,
         step: null,
         weight: null,
@@ -479,7 +499,15 @@ export default {
       this.download('dm/rtdata/export', {
         ...this.queryParams
       }, `rtdata_${new Date().getTime()}.xlsx`)
+    },
+    //颜色
+     getTemperatureColor(temperature) {
+    if (temperature >= 38.5 && temperature <= 39.5) {
+      return 'green'; // 正常范围，显示绿色
+    } else {
+      return 'red'; // 超出正常范围，显示红色
     }
+  }
   }
 };
 </script>

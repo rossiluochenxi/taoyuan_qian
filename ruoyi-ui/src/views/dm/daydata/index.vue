@@ -161,7 +161,7 @@
           placeholder="请选择上传时间">
         </el-date-picker>
       </el-form-item> -->
-                 <el-form-item label="创建时间">
+                 <el-form-item label="时间间隔">
             <el-date-picker
               v-model="dateRange"
               style="width: 240px"
@@ -178,7 +178,7 @@
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
+    <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
           type="primary"
@@ -188,7 +188,7 @@
           @click="handleAdd"
           v-hasPermi="['dm:daydata:add']"
         >新增</el-button>
-      </el-col>
+      </el-col> -->
       <!-- <el-col :span="1.5">
         <el-button
           type="success"
@@ -200,7 +200,7 @@
           v-hasPermi="['dm:daydata:edit']"
         >修改</el-button>
       </el-col> -->
-      <el-col :span="1.5">
+      <!-- <el-col :span="1.5">
         <el-button
           type="danger"
           plain
@@ -210,7 +210,7 @@
           @click="handleDelete"
           v-hasPermi="['dm:daydata:remove']"
         >删除</el-button>
-      </el-col>
+      </el-col> -->
       <!-- <el-col :span="1.5">
         <el-button
           type="warning"
@@ -221,8 +221,8 @@
           v-hasPermi="['dm:daydata:export']"
         >导出</el-button>
       </el-col> -->
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row>
+      <!-- <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+    </el-row> -->
 
     <el-table v-loading="loading" :data="daydataList" @selection-change="handleSelectionChange"
       border resizable
@@ -233,9 +233,15 @@
       <el-table-column label="耳标" align="center" prop="agroLivestockCode" />
       <el-table-column label="设备编号" align="center" prop="agroLivestockIccid" />
       <el-table-column label="项圈编号" align="center" prop="agroLivestockXqiccid" />
-      <el-table-column label="温度" align="center" prop="temperature" />
-      <el-table-column label="步数" align="center" prop="step" />
+      <el-table-column label="设备类型" align="center" prop="deviceType" />
+      <el-table-column label="温度" align="center" prop="temperature">
+  <template slot-scope="scope">
+    <span :style="{ color: getTemperatureColor(scope.row.temperature) }">{{ scope.row.temperature }}</span>
+  </template>
+</el-table-column>      <el-table-column label="步数" align="center" prop="step" />
       <el-table-column label="体重" align="center" prop="weight" />
+      <el-table-column label="电量" align="center" prop="drycell" />
+
       <!-- <el-table-column label="牲畜所在经度" align="center" prop="livestockLon" />
       <el-table-column label="牲畜所在纬度" align="center" prop="livestockLat" />
       <el-table-column label="rsrq" align="center" prop="rsrq" />
@@ -430,6 +436,8 @@ export default {
         agroLivestockCode: null,
         agroLivestockIccid: null,
         agroLivestockXqiccid: null,
+        deviceType: null,
+        drycell: null,
         imei: null,
         deviceId: null,
         temperature: null,
@@ -515,7 +523,15 @@ export default {
       this.download('dm/daydata/export', {
         ...this.queryParams
       }, `daydata_${new Date().getTime()}.xlsx`)
+    },
+    //颜色
+     getTemperatureColor(temperature) {
+    if (temperature >= 38.5 && temperature <= 39.5) {
+      return 'green'; // 正常范围，显示绿色
+    } else {
+      return 'red'; // 超出正常范围，显示红色
     }
+  }
   }
 };
 </script>

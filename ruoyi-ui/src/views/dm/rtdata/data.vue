@@ -1,14 +1,14 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="养殖户" prop="agroUserName">
+    <!-- <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px"> -->
+      <!-- <el-form-item label="养殖户" prop="agroUserName">
         <el-input
           v-model="queryParams.agroUserName"
           placeholder="请输入养殖户"
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <!-- <el-form-item label="牲畜档案id" prop="agroLivestockId">
         <el-input
           v-model="queryParams.agroLivestockId"
@@ -17,30 +17,30 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item> -->
-      <el-form-item label="耳标" prop="agroLivestockCode">
+      <!-- <el-form-item label="耳标" prop="agroLivestockCode">
         <el-input
           v-model="queryParams.agroLivestockCode"
           placeholder="请输入耳标"
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
-      <el-form-item label="设备编号" prop="agroLivestockIccid">
+      </el-form-item> -->
+      <!-- <el-form-item label="设备编号" prop="agroLivestockIccid">
         <el-input
           v-model="queryParams.agroLivestockIccid"
           placeholder="请输入设备编号"
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
-      <el-form-item label="项圈编号" prop="agroLivestockXqiccid">
+      </el-form-item> -->
+      <!-- <el-form-item label="项圈编号" prop="agroLivestockXqiccid">
         <el-input
           v-model="queryParams.agroLivestockXqiccid"
           placeholder="请输入项圈编号"
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <!-- <el-form-item label="温度" prop="temperature">
         <el-input
           v-model="queryParams.temperature"
@@ -129,20 +129,20 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item> -->
-      <el-form-item label="上传时间" prop="date">
+      <!-- <el-form-item label="上传时间" prop="date">
         <el-date-picker clearable
           v-model="queryParams.date"
           type="date"
           value-format="yyyy-MM-dd"
           placeholder="请选择上传时间">
         </el-date-picker>
-      </el-form-item>
-      <el-form-item>
+      </el-form-item> -->
+      <!-- <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
-    </el-form>
-
+    </el-form> -->
+<!-- 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
@@ -153,7 +153,7 @@
           @click="handleAdd"
           v-hasPermi="['dm:data:add']"
         >新增</el-button>
-      </el-col>
+      </el-col> -->
       <!-- <el-col :span="1.5">
         <el-button
           type="success"
@@ -165,7 +165,7 @@
           v-hasPermi="['dm:data:edit']"
         >修改</el-button>
       </el-col> -->
-      <el-col :span="1.5">
+      <!-- <el-col :span="1.5">
         <el-button
           type="danger"
           plain
@@ -175,7 +175,7 @@
           @click="handleDelete"
           v-hasPermi="['dm:data:remove']"
         >删除</el-button>
-      </el-col>
+      </el-col> -->
       <!-- <el-col :span="1.5">
         <el-button
           type="warning"
@@ -186,8 +186,8 @@
           v-hasPermi="['dm:data:export']"
         >导出</el-button>
       </el-col> -->
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row>
+      <!-- <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+    </el-row> -->
 
     <el-table v-loading="loading" :data="dataList" @selection-change="handleSelectionChange"
     border resizable
@@ -198,10 +198,18 @@
       <el-table-column label="耳标" align="center" prop="agroLivestockCode" />
       <el-table-column label="设备编号" align="center" prop="agroLivestockIccid" />
       <el-table-column label="项圈编号" align="center" prop="agroLivestockXqiccid" />
-      <el-table-column label="温度" align="center" prop="temperature" />
+      <el-table-column label="设备类型" align="center" prop="deviceType" />
+
+      <!-- <el-table-column label="温度" align="center" prop="temperature" /> -->
+      <el-table-column label="温度" align="center" prop="temperature">
+  <template slot-scope="scope">
+    <span :style="{ color: getTemperatureColor(scope.row.temperature) }">{{ scope.row.temperature }}</span>
+  </template>
+</el-table-column>
       <el-table-column label="步数" align="center" prop="step" />
       <el-table-column label="体重" align="center" prop="weight" />
-      <!-- <el-table-column label="牲畜所在经度" align="center" prop="livestockLon" />
+      <el-table-column label="电量" align="center" prop="drycell" />
+     <!-- <el-table-column label="牲畜所在经度" align="center" prop="livestockLon" />
       <el-table-column label="牲畜所在纬度" align="center" prop="livestockLat" /> -->
       <!-- <el-table-column label="rsrq" align="center" prop="rsrq" />
       <el-table-column label="ecl" align="center" prop="ecl" />
@@ -210,8 +218,9 @@
       <el-table-column label="rsrp" align="center" prop="rsrp" />
       <el-table-column label="pci" align="center" prop="pci" /> -->
       <el-table-column label="上传时间" align="center" prop="date" width="180">
+
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.date, '{y}-{m}-{d}') }}</span>
+          <span>{{  formatDate(scope.row.date) }}</span>
         </template>
       </el-table-column>
       <!-- <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -329,6 +338,7 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
+      rtIccid:null,
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -359,15 +369,15 @@ export default {
     };
   },
   created() {
-    const agroLivestockIccid = this.$route.params && this.$route.params.agroLivestockIccid;
-    console.log("agroLivestockIccid" + agroLivestockIccid);
-    this.getList(agroLivestockIccid);
+    this.rtIccid = this.$route.params && this.$route.params.agroLivestockIccid;
+     console.log("rtIccid" + this.rtIccid);
+    this.getList();
   },
   methods: {
     /** 查询全部数据列表 */
-    getList(agroLivestockIccid) {
+    getList() {
       this.loading = true;
-      this.queryParams.agroLivestockIccid = agroLivestockIccid;
+      this.queryParams.agroLivestockIccid = this.rtIccid;
       console.log("agroLivestockIccid" + this.queryParams.agroLivestockIccid);
       listData(this.queryParams).then(response => {
         this.dataList = response.rows;
@@ -375,6 +385,21 @@ export default {
         this.loading = false;
       });
     },
+       formatDate(dateString) {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    month = month < 10 ? '0' + month : month;
+    let day = date.getDate();
+    day = day < 10 ? '0' + day : day;
+    let hours = date.getHours();
+    hours = hours < 10 ? '0' + hours : hours;
+    let minutes = date.getMinutes();
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    let seconds = date.getSeconds();
+    seconds = seconds < 10 ? '0' + seconds : seconds;
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  },
     // 取消按钮
     cancel() {
       this.open = false;
@@ -394,6 +419,8 @@ export default {
         agroLivestockCode: null,
         agroLivestockIccid: null,
         agroLivestockXqiccid: null,
+        deviceType: null,
+        drycell: null,
         imei: null,
         deviceId: null,
         temperature: null,
@@ -478,7 +505,14 @@ export default {
       this.download('dm/data/export', {
         ...this.queryParams
       }, `data_${new Date().getTime()}.xlsx`)
+    },
+      getTemperatureColor(temperature) {
+    if (temperature >= 38.5 && temperature <= 39.5) {
+      return 'green'; // 正常范围，显示绿色
+    } else {
+      return 'red'; // 超出正常范围，显示红色
     }
+  }
   }
 };
 </script>

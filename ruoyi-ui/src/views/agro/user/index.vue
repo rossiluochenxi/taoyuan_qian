@@ -76,7 +76,7 @@
           v-hasPermi="['agro:user:add']"
         >新增</el-button>
       </el-col>
-      <el-col :span="1.5">
+      <!-- <el-col :span="1.5">
         <el-button
           type="success"
           plain
@@ -86,8 +86,8 @@
           @click="handleUpdate"
           v-hasPermi="['agro:user:edit']"
         >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
+      </el-col> -->
+      <!-- <el-col :span="1.5">
         <el-button
           type="danger"
           plain
@@ -97,7 +97,7 @@
           @click="handleDelete"
           v-hasPermi="['agro:user:remove']"
         >删除</el-button>
-      </el-col>
+      </el-col> -->
       <el-col :span="1.5">
         <el-button
           type="warning"
@@ -195,7 +195,7 @@
     </el-cascader>
     </el-form-item>
          <!-- </div> -->
-   <el-form-item label="经纬度" prop="areaName"  >
+   <el-form-item label="经纬度" prop="lon"  >
 
  <div class="input-group">
     <el-input placeholder="经度" :size="size" :disabled="inpDisabled" v-model="form.lon" class="input-with-select"></el-input>
@@ -263,7 +263,7 @@ export default {
       // clickedPosition: null, // 存储点击位置的经纬度信息
       mapLoaded: false, // 标志位表示地图是否已加载
 
-
+     // 地区
       options: pcas,
       selectedOptions: [],
       addrCodes: [],
@@ -315,6 +315,9 @@ export default {
         identity: [
           { required: true, message: "证件号码不能为空", trigger: "blur" }
         ],
+         lon: [
+          { required: true, message: "经纬度不能为空", trigger: "blur" }
+        ],
       }
     };
   },
@@ -360,7 +363,7 @@ export default {
     initMap() {
         this.map = new AMap.Map("mapDiv", {
           zoom: 8,
-          center: [116.396, 39.919],
+          center: [123.414875, 41.908154],
           resizeEnable: true
         });
         // 添加地图点击事件监听器
@@ -398,7 +401,7 @@ export default {
       this.reset();
     },
 
-    // 取消按钮
+    // 地图取消按钮
     quxiao() {
       this.innerVisible = false;
       // this.reset();

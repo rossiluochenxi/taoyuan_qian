@@ -23,6 +23,8 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+
+
       <el-form-item label="设备编号" prop="iccid">
         <el-input
           v-model="queryParams.iccid"
@@ -31,14 +33,14 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="项圈编号" prop="xqIccid">
+      <!-- <el-form-item label="项圈编号" prop="xqIccid">
         <el-input
           v-model="queryParams.xqIccid"
           placeholder="请输入项圈编号"
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
 
       <el-form-item label="牲畜类型" prop="livestockType">
         <el-select v-model="queryParams.livestockType" placeholder="请选择牲畜类型" clearable>
@@ -77,7 +79,7 @@
           placeholder="请选择出生日期">
         </el-date-picker>
       </el-form-item> -->
-      <el-form-item label="是否投保" prop="isInsure">
+      <!-- <el-form-item label="是否投保" prop="isInsure">
         <el-select v-model="queryParams.isInsure" placeholder="请选择是否投保" clearable>
           <el-option
             v-for="dict in dict.type.agro_is_insure"
@@ -86,15 +88,15 @@
             :value="dict.value"
           />
         </el-select>
-      </el-form-item>
-      <el-form-item label="站点" prop="station">
+      </el-form-item> -->
+      <!-- <el-form-item label="站点" prop="station">
         <el-input
           v-model="queryParams.station"
           placeholder="请输入站点"
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -112,7 +114,7 @@
           v-hasPermi="['agro:livestock:add']"
         >新增</el-button>
       </el-col>
-      <el-col :span="1.5">
+      <!-- <el-col :span="1.5">
         <el-button
           type="success"
           plain
@@ -122,8 +124,8 @@
           @click="handleUpdate"
           v-hasPermi="['agro:livestock:edit']"
         >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
+      </el-col> -->
+      <!-- <el-col :span="1.5">
         <el-button
           type="danger"
           plain
@@ -133,7 +135,7 @@
           @click="handleDelete"
           v-hasPermi="['agro:livestock:remove']"
         >删除</el-button>
-      </el-col>
+      </el-col> -->
       <el-col :span="1.5">
         <el-button
           type="warning"
@@ -154,11 +156,16 @@
      >
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="主键id" align="center" prop="id" /> -->
-      <el-table-column label="养殖户" align="center" prop="agroUserName" :width="flexColumnWidth('养殖户','agroUserName')" />
-      <el-table-column label="原始耳标" align="center" prop="code" :width="flexColumnWidth('原始耳标','code')"/>
-      <el-table-column label="设备编号" align="center" prop="iccid" :width="flexColumnWidth('设备编号','iccid')"/>
-      <el-table-column label="项圈编号" align="center" prop="xqIccid" :width="flexColumnWidth('项圈编号','xqIccid')"/>
-      <el-table-column label="牲畜类型" align="center" prop="livestockType" :width="flexColumnWidth('牲畜类型','livestockType')">
+      <el-table-column label="养殖户" align="center" prop="agroUserName"  />
+      <el-table-column label="原始耳标" align="center" prop="code"/>
+         <el-table-column label="设备类型" align="center" prop="deviceType">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.device_type" :value="scope.row.deviceType"/>
+        </template>
+      </el-table-column>
+      <el-table-column label="设备编号" align="center" prop="iccid" />
+      <!-- <el-table-column label="项圈编号" align="center" prop="xqIccid" :width="flexColumnWidth('项圈编号','xqIccid')"/> -->
+      <el-table-column label="牲畜类型" align="center" prop="livestockType" >
         <template slot-scope="scope">
           <dict-tag :options="dict.type.agro_livestock_type" :value="scope.row.livestockType"/>
         </template>
@@ -231,7 +238,7 @@
     />
 
     <!-- 添加或修改牲畜档案管理对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body >
+    <el-dialog :title="title" :visible.sync="open" width="500px" >
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="养殖户" prop="agroUserName">
            <el-select v-model="form.agroUserName" filterable placeholder="请选择" @change="setId" style="width: 100%;" >
@@ -253,14 +260,35 @@
         <el-form-item label="原始耳标" prop="code">
           <el-input v-model="form.code" placeholder="请输入原始耳标" />
         </el-form-item>
+
+         <el-form-item label="设备类型" prop="deviceType">
+          <el-select v-model="form.deviceType" placeholder="请选择设备类型" style="display: block;">
+            <el-option
+              v-for="dict in dict.type.device_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        
+   <el-form-item label="经纬度"   prop="elLon" v-if="form.deviceType === 'el'">
+
+ <div class="input-group" style="display: flex;">
+    <el-input placeholder="经度" :size="size" :disabled="inpDisabled" v-model="form.elLon" class="input-with-select"></el-input>
+    <el-input placeholder="纬度" :size="size" :disabled="inpDisabled" v-model="form.elLab" class="input-with-select"></el-input>
+    <el-button :disabled="btnDisabled" @click="onClickButton" icon="el-icon-location-information"></el-button>
+  </div>
+    </el-form-item>  
+
         <el-form-item label="设备编号" prop="iccid">
           <el-input v-model="form.iccid" placeholder="请输入设备编号" />
         </el-form-item>
-        <el-form-item label="项圈编号" prop="xqIccid">
+        <!-- <el-form-item label="项圈编号" prop="xqIccid">
           <el-input v-model="form.xqIccid" placeholder="请输入项圈编号" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="牲畜类型" prop="livestockType">
-          <el-select v-model="form.livestockType" placeholder="请选择牲畜类型"style="display: block">
+          <el-select v-model="form.livestockType" placeholder="请选择牲畜类型" style="display: block">
             <el-option
               v-for="item in livestockTypeList"
               :key="item.livestockType"
@@ -270,7 +298,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="牲畜品种" prop="livestockVarieties">
-          <el-select v-model="form.livestockVarieties" placeholder="请选择牲畜品种"style="display: block;">
+          <el-select v-model="form.livestockVarieties" placeholder="请选择牲畜品种" style="display: block;">
             <el-option
               v-for="item in livestockVarietiesList"
               :key="item.livestockVarieties"
@@ -279,20 +307,27 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="预计出栏" prop="outDate">
+
+
+
+  
+        <el-form-item label="预计出栏" prop="outDate" >
           <el-date-picker clearable
             v-model="form.outDate"
             type="date"
             value-format="yyyy-MM-dd"
-            placeholder="请选择预计出栏日期">
-          </el-date-picker style="display: block;">
-        </el-form-item>
+            placeholder="请选择预计出栏日期"
+            style="width: 100%;">
+          </el-date-picker>
+        </el-form-item >
+
+        
         <el-form-item label="出生日期" prop="birthday">
           <el-date-picker clearable
             v-model="form.birthday"
             type="date"
             value-format="yyyy-MM-dd"
-            placeholder="请选择出生日期" style="display: block;">
+            placeholder="请选择出生日期"   style="width: 100%;">
           </el-date-picker>
         </el-form-item>
         <!-- <el-form-item label="贷款日期" prop="loanDate">
@@ -321,15 +356,26 @@
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
-        <el-form-item label="照片" prop="image">
+        <!-- <el-form-item label="照片" prop="image">
           <image-upload v-model="form.image"/>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+       <el-dialog width="630px" height="500px"  title="耳标定位" :visible.sync="innerVisible" >
+       <div  id="mapDiv" ref="mapDiv" style="width: 600px; height: 500px;" >
+        <!-- <div id="coordinates"></div> 显示坐标的元素 -->
+
+        </div>
+        <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="queding">确 定</el-button>
+        <el-button @click="quxiao">取 消</el-button>
+       
+        </span>
+   </el-dialog>
   </div>
 </template>
 
@@ -341,9 +387,25 @@ import { listLivestockVarieties} from "@/api/agro/livestockVarieties";
 
 export default {
   name: "Livestock",
-  dicts: ['agro_livestock_varieties', 'agro_livestock_type', 'agro_is_insure'],
+  dicts: ['agro_livestock_varieties', 'agro_livestock_type', 'agro_is_insure','device_type'],
   data() {
     return {
+
+   //地图
+      dizhiMap: '',
+       innerVisible: false,
+      size: '11',
+      inpDisabled:false,
+      btnDisabled: false,
+      // marker: null, // 存储标记对象
+      isMarkerAdded: false, // 控制变量，确保标记只添加一次
+      // clickedPosition: null, // 存储点击位置的经纬度信息
+      mapLoaded: false, // 标志位表示地图是否已加载
+      //用户经纬度圆心坐标
+      zbLon: null,
+      zbLat: null,
+
+
       //牲畜品种集合
       livestockVarietiesList: [],
       userPostType: '',
@@ -369,6 +431,8 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
+      areaName: null,
+      showElLon : false,
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -383,6 +447,10 @@ export default {
         birthday: null,
         isInsure: null,
         station: null,
+        deviceType: null,
+        elLon: null,
+        elLab: null,
+          
       },
       // 表单参数
       form: {},
@@ -403,12 +471,23 @@ export default {
         livestockVarieties: [
           { required: true, message: "牲畜品种不能为空", trigger: "change" }
         ],
+          deviceType: [
+          { required: true, message: "设备类型不能为空", trigger: "change" }
+        ],
+           elLon: [
+          { required: true, message: "经纬度不能为空", trigger: "change" }
+        ],
+       
+      
       }
     };
   },
+
+
   created() {
        // 获取当前用户信息
-    this.userPostType = this.$store.state.user.roles[0];
+    // this.userPostType = this.$store.state.user.roles[0];
+    // this.$set(this.form, 'deviceType','el');
     this.getList();
     this.getUserList();
     this.getlivestockTypeList();
@@ -418,6 +497,7 @@ export default {
   //     console.log("调用了吗");
   //     }
   },
+
   methods: {
     /** 查询牲畜档案管理列表 */
     getList() {
@@ -427,14 +507,71 @@ export default {
         this.total = response.total;
         this.loading = false;
 
-      });
+      });  
 
     },
+     onClickButton() {
+      this.innerVisible = true;
+      // this.initMap();
+      this.$nextTick(() => {
+      this.initMap();
+      });
+
+
+},
+ initMap() {
+        this.map = new AMap.Map("mapDiv", {
+          zoom: 8,
+           center: [123.414875, 41.908154],
+          // center: [parseFloat(this.zbLon), parseFloat(this.zbLat)], // 圆心坐标
+          resizeEnable: true
+        });
+
+       // 添加地图点击事件监听器
+        this.map.on('click', (event) => {
+          const position = event.lnglat; // 获取点击位置的经纬度信息
+          // this.clickedPosition = position; // 更新 clickedPosition 数据
+
+          // 先判断是否已经存在标记
+          if (this.currentLocationMarker) {
+            this.currentLocationMarker.setMap(null); // 将旧标记从地图上移除
+            this.currentLocationMarker = null; // 将标记对象引用设置为null
+          }
+
+          // 添加新的标记
+          this.currentLocationMarker = new AMap.Marker({
+            position: position,
+            icon: require('@/assets/images/mark_b.png'),
+            offset: new AMap.Pixel(-12, -36), // 图标的偏移量，可以根据实际情况调整
+            map: this.map,
+            zIndex: 999 // 设置标记的层级，确保位于最上层
+          });
+          this.$set(this.form, 'elLon', position.lng);
+          this.$set(this.form, 'elLab', position.lat);
+          this.isMarkerAdded = true; // 标记已添加
+  });
+ 
+    },
+
+
     // 取消按钮
     cancel() {
       this.open = false;
       this.reset();
     },
+
+    // 地图取消按钮
+    quxiao() {
+      this.innerVisible = false;
+      // this.reset();
+    },
+
+
+        queding() { 
+      this.innerVisible = false;
+      //  this.reset();
+    },
+
     // 表单重置
     reset() {
       this.form = {
@@ -567,9 +704,22 @@ export default {
           */
     setId() {
     // 获取选中的用户对象
-    const selectedUser = this.userList.find(item => item.name === this.form.agroUserName)
+      const selectedUser = this.userList.find(item => item.name === this.form.agroUserName);
     // 将选中用户的id赋值给form.code
-    this.form.agroUserId = selectedUser ? selectedUser.id : null
+      this.form.agroUserId = selectedUser ? selectedUser.id : null;
+      //圆心坐标
+      // 获取选中的用户对象
+      // const userLon = this.userList.find(item => item.name === this.form.agroUserName);
+      // const userLat = this.userList.find(item => item.name === this.form.agroUserName);
+      this.zbLon = selectedUser ? selectedUser.lon : null;
+      this.zbLat = selectedUser ? selectedUser.lat : null;
+      console.log(this.zbLon + "=圆心坐标");
+      console.log(this.zbLat+"圆心坐标");
+
+
+    
+        
+      
   },
     /** 导出按钮操作 */
     handleExport() {
@@ -577,42 +727,7 @@ export default {
         ...this.queryParams
       }, `livestock_${new Date().getTime()}.xlsx`)
     },
-     //遍历列的所有内容，获取最宽一列的宽度
-getMaxLength (arr) {
-  return arr.reduce((acc, item) => {
-    if (item) {
-      const calcLen = this.getTextWidth(item)
-      if (acc < calcLen) {
-        acc = calcLen
-      }
-    }
-    return acc
-  }, 0)
-},
 
-getTextWidth (str) {
-  let width = 0
-  const html = document.createElement('span')
-  html.innerText = str
-  html.className = 'getTextWidth'
-  document.querySelector('body').appendChild(html)
-  width = document.querySelector('.getTextWidth').offsetWidth
-  document.querySelector('.getTextWidth').remove()
-  return width
-},
-/**
- * el-table-column 自适应列宽
- * @param prop_label: 表名
- * @param table_data: 表格数据
- */
-flexColumnWidth (label, prop) {
-// 1.获取该列的所有数据
-  const arr = this.livestockList.map(x => x[prop])
-// 把每列的表头也加进去算
-  arr.push(label) 
-// 2.计算每列内容最大的宽度 + 表格的内间距（依据实际情况而定）
-  return (this.getMaxLength(arr) + 40) + 'px'
-    },
 
 
 
@@ -620,3 +735,11 @@ flexColumnWidth (label, prop) {
   }
 };
 </script>
+<style scoped>
+.input-group {
+  display: flex; /* 使用 Flexbox 布局 */
+  align-items: center; /* 垂直居中 */
+}
+
+</style>
+
