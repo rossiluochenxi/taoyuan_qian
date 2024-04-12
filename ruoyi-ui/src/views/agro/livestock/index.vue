@@ -288,7 +288,7 @@
           <el-input v-model="form.xqIccid" placeholder="请输入项圈编号" />
         </el-form-item> -->
         <el-form-item label="牲畜类型" prop="livestockType">
-          <el-select v-model="form.livestockType" placeholder="请选择牲畜类型" style="display: block">
+          <el-select v-model="form.livestockType" placeholder="请选择牲畜类型" @change="setLivestockTypeId" style="display: block">
             <el-option
               v-for="item in livestockTypeList"
               :key="item.livestockType"
@@ -298,7 +298,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="牲畜品种" prop="livestockVarieties">
-          <el-select v-model="form.livestockVarieties" placeholder="请选择牲畜品种" style="display: block;">
+          <el-select v-model="form.livestockVarieties" placeholder="请选择牲畜品种" @change="setLivestockVarietiesId" style="display: block;">
             <el-option
               v-for="item in livestockVarietiesList"
               :key="item.livestockVarieties"
@@ -450,7 +450,8 @@ export default {
         deviceType: null,
         elLon: null,
         elLab: null,
-          
+        livestockVarietiesId: null,
+        livestockTypeId: null,  
       },
       // 表单参数
       form: {},
@@ -716,11 +717,23 @@ export default {
       console.log(this.zbLon + "=圆心坐标");
       console.log(this.zbLat+"圆心坐标");
 
-
     
-        
-      
   },
+
+  setLivestockTypeId() {
+    // 获取选中的牲畜类型id赋值给对象
+      const selectedLivestockTypeId = this.livestockTypeList.find(item => item.livestockType === this.form.livestockType);
+      this.form.livestockTypeId = selectedLivestockTypeId ? selectedLivestockTypeId.id : null;
+    
+  },
+
+  setLivestockVarietiesId() {
+    // 获取选中的牲畜品种id赋值给对象
+      const selectedLivestockVarietiesId = this.livestockVarietiesList.find(item => item.livestockVarieties === this.form.livestockVarieties);
+      this.form.livestockVarietiesId = selectedLivestockVarietiesId ? selectedLivestockVarietiesId.id : null;
+    
+  },
+
     /** 导出按钮操作 */
     handleExport() {
       this.download('agro/livestock/export', {
