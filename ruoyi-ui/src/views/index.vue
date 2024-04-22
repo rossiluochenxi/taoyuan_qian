@@ -1,234 +1,1412 @@
 <template>
-  <div class="app-container home">
+  <div id="index" ref="appRef">
+    <div class="bg">
+      <dv-loading v-show="loading">Loading...</dv-loading>
+      <div class="host-body">
+        <div>
+          <!-- 顶部title部分 -->
+          <el-row>
+            <el-col :span="6"
+              ><dv-decoration-8
+                class="title_right"
+                :color="['#008CFF', '#00ADDD']"
+            /></el-col>
+            <el-col :span="12"
+              ><div class="title_text">陶 源 生 物 资 产 监 管 系 统</div>
+              <dv-decoration-5
+                class="title_center"
+                :color="['#008CFF', '#00ADDD']"
+            /></el-col>
+            <el-col :span="6"
+              ><div class="title_time">{{ dateYear + dateWeek + dateDay }}</div>
+              <dv-decoration-8
+                :reverse="true"
+                class="title_left"
+                :color="['#008CFF', '#00ADDD']"
+            /></el-col>
+          </el-row>
+          <!-- 主体部分 -->
+          <el-row>
+            <!-- 第一列 -->
+            <el-col :span="6">
+              <!-- 饼图部分 -->
+              <div class="left_box1">
+                <dv-border-box-12>
+                  <div id="Rose_diagram"></div>
+                  <dv-active-ring-chart
+                    :config="config"
+                    class="left_box1_rose_right"
+                  />
+                  <div
+                    class="rose_text"
+                    v-for="(item, index) in numberData"
+                    :key="index"
+                  >
+                    <p>
+                      <span class="coin">￥</span>
+                      <span class="rose_text_nmb">{{
+                        item.number.number
+                      }}</span>
+                    </p>
+                    <p>
+                      <span>{{ item.text }}</span>
+                      <span class="colorYellow">(头)</span>
+                    </p>
+                  </div>
+                </dv-border-box-12>
+              </div>
+              <!-- 柱状图部分 -->
+              <div class="left_box2">
+                <dv-border-box-12 style="padding-top: 10px">
+                  <p style="margin-left: 15px">品种结构</p>
+                  <div id="columnar"></div>
+                </dv-border-box-12>
+              </div>
+              <!-- 轮播表格部分 -->
+              <div class="left_box3">
+                <dv-border-box-12 style="padding-top: 10px">
+                  <dv-scroll-board
+                    :config="board_info"
+                    class="carousel_list"
+                    oddRowBGC="#fff"
+                  />
+                </dv-border-box-12>
+              </div>
+            </el-col>
+            <!-- 第二列 -->
+            <el-col :span="12">
+              <!-- 中国地图 -->
+              <div id="china-map"></div>
+              <!-- 折线图 -预警表-->
+                <dv-border-box-8>
+                  <div id="line_center_diagram"></div>
+                </dv-border-box-8>
+               
+                <dv-border-box-12 style="padding-top: 38px">
+                  <div class="warning_table">
+                    <div style="height: 250px; overflow-y: auto;">
 
-    <div class="left-column">
-      <div class="box big-box blue">
-        <canvas id="pieChart" width="200" height="200"></canvas>
-      </div>
-      <div class="box big-box blue">
-        <canvas id="barChart" width="400" height="200"></canvas>
-      </div>
-      <div class="box big-box blue">
-        <table class="monitoring-table">
-          <caption>视频监控</caption>
-          <thead>
-            <tr>
-              <th>设备编号</th>
-              <th>设备名称</th>
-              <th>养殖户名称</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>001</td>
-              <td>摄像头1</td>
-              <td>张三</td>
-            </tr>
-            <tr>
-              <td>002</td>
-              <td>摄像头2</td>
-              <td>李四</td>
-            </tr>
-            <!-- 可以继续添加更多的表格行 -->
-          </tbody>
-        </table>
+                      <el-table
+                      class="el-table"
+                        :data="tableData"
+                        height="100%"
+                        border="none"
+                        style="width: 98%;margin-left: 10px;margin-top:-15px; ">
+                        <el-table-column
+                          prop="farmer"
+                          label="养殖户名称"
+                          width="180">
+                        </el-table-column>
+                        <el-table-column
+                          prop="cowNumber"
+                          label="牛编号"
+                          width="180">
+                        </el-table-column>
+                        <el-table-column
+                          prop="breed"
+                          label="品种">
+                        </el-table-column>
+                        <el-table-column
+                          prop="content"
+                          label="预警信息">
+                        </el-table-column>
+                      </el-table>
+                       </div>
+                   </div>
+                </dv-border-box-12>
+                  
+
+            </el-col>
+            <!-- 第三列 -->
+            <el-col :span="6">
+              <!-- 轮播排行榜部分 -->
+              <div class="right_box1">
+                <dv-border-box-12>
+                  <dv-decoration-7 style="width: 100%; height: 30px"
+                    >品 种 排 名</dv-decoration-7
+                  >
+                  <dv-scroll-ranking-board
+                    :config="config"
+                    style="width: 95%; height: 87%; margin-left: 2%"
+                  />
+                </dv-border-box-12>
+              </div>
+              <!-- 虚线柱状图部分 -->
+              <div class="right_box2">
+                <dv-border-box-12 :reverse="true">
+                  <div id="dotter_bar"></div>
+                </dv-border-box-12>
+              </div>
+              <!-- 部分 -->
+              <div class="right_box3">
+                <dv-border-box-12 :reverse="true">
+                  <dv-conical-column-chart :config="cone" class="cone_box" />
+                </dv-border-box-12>
+              </div>
+            </el-col>
+          </el-row>
+        </div>
       </div>
     </div>
-
-    <div class="middle-column">
-      <div class="box bigger-box blue">陶源畜牧平台
-        <div id="mapContainer" class="map-container"></div>
-      </div>
-
-      <div class="box small-box blue">
-        <p style="text-align: center;">这是一个小盒子</p>
-      </div>
-    </div>
-
-    <div class="right-column">
-      <div class="box big-box blue">
-        <p style="text-align: center;">这是一个大盒子</p>
-      </div>
-      <div class="box big-box blue">
-        <p style="text-align: center;">这是一个大盒子</p>
-      </div>
-      <div class="box big-box blue">
-        <p style="text-align: center;">这是一个大盒子</p>
-      </div>
-    </div>
-
   </div>
 </template>
 
 <script>
-import * as echarts from 'echarts'
-require('echarts/theme/macarons')
 
+// 将自动注册所有组件为全局组件4.15
+// import dataV from '@jiaminghi/data-view' 
+// Vue.use(dataV)
+// import ElementUI from 'element-ui';  
+// import 'element-ui/lib/theme-chalk/index.css';
+//  Vue.use(ElementUI);
+// import geoJson from '@/views/china.json'
+// import * as echarts from 'echarts'
+// Vue.prototype.$echarts = echarts
+// echarts.registerMap('china', geoJson);
+
+
+import drawMixin from "./drawMixin"; //自适应缩放
+import { listagroIndex } from "@/api/agroIndex/agroIndex";//首页品种数量
+// import { formatTime } from "../utils/index.js"; //日期格式转换
+import * as echarts from 'echarts'
 export default {
-  name: 'Home',
+  mixins: [drawMixin],
   data() {
     return {
-      //livestock牲畜坐标
-      // livestockCoordinates:[],
-      //圆心坐标
-      centerl:[],
-      //用户经纬度
-      lon: null,
-      lat: null,
+      //首页品种集合
+      IndexVarList: [],
+      //定时器
+      timing: null,
+      //loading图
+      loading: true,
+      //时分秒
+      dateDay: null,
+      //年月日
+      dateYear: null,
+      //周几
+      dateWeek: null,
+      //周几
+      weekday: ["周日", "周一", "周二", "周三", "周四", "周五", "周六"],
+
+      //预警信息
+      tableData: [{
+        farmer: '张三',
+        cowNumber: '001',
+        breed: '荷斯坦',
+        content: '健康状况良好'
+      }, {
+        farmer: '李四',
+        cowNumber: '002',
+        breed: '安格斯',
+        content: '产奶量上升'
+      }, {
+        farmer: '王五',
+        cowNumber: '003',
+        breed: '杰洛斯',
+        content: '需注意疫苗注射'
+      }, {
+        farmer: '张三',
+        cowNumber: '001',
+        breed: '荷斯坦',
+        content: '健康状况良好'
+      }, {
+        farmer: '李四',
+        cowNumber: '002',
+        breed: '安格斯',
+        content: '产奶量上升'
+      }, {
+        farmer: '王五',
+        cowNumber: '003',
+        breed: '杰洛斯',
+        content: '需注意疫苗注射'
+      }],
+
+      //轮播排行榜
+      config: {
+        data: [
+          {
+            name: "黄牛",
+            value: 55,
+          },
+          {
+            name: "夏洛莱",
+            value: 120,
+          },
+          {
+            name: "利木赞",
+            value: 78,
+          },
+          {
+            name: "大角牛",
+            value: 66,
+          },
+          {
+            name: "小脚牛",
+            value: 80,
+          },
+          {
+            name: "荷兰牛",
+            value: 45,
+          },
+          {
+            name: "能繁母牛",
+            value: 29,
+          },
+        ],
+      },
+      //左侧饼图文字
+      numberData: [
+        {
+          number: {
+            number: 15,
+          },
+          text: "牛群结构",
+        },
+        // {
+        //   number: {
+        //     number: 1144,
+        //   },
+        //   text: "总共完成数量",
+        // },
+        // {
+        //   number: {
+        //     number: 361,
+        //   },
+        //   text: "正在编译数量",
+        // },
+      ],
+      //左侧轮播表格配置项
+      board_info: {
+        header: ["养殖户名称", "监控设备编号", "设备状态"],
+        data: [
+          ["张三", "10830", "在线"],
+          ["张四", "13500", "在线"],
+          ["张五", "10350", "在线"],
+          ["张六", "13300", "在线"],
+          ["张七", "12500", "在线"],
+          ["张八", "11500", "在线"],
+          ["张九", "12500", "在线"],
+          ["王六", "10360", "在线"],
+          ["王二", "10567", "在线"],
+          ["李四", "15721", "在线"],
+        ],
+        evenRowBGC: "#020308",
+        oddRowBGC: "#382B47",
+        headerBGC: "#020308",
+      },
+      // 定义颜色
+      colorList: {
+        linearYtoG: {
+          type: "linear",
+          x: 0,
+          y: 0,
+          x2: 1,
+          y2: 1,
+          colorStops: [
+            {
+              offset: 0,
+              color: "#f5b44d",
+            },
+            {
+              offset: 1,
+              color: "#28f8de",
+            },
+          ],
+        },
+        linearGtoB: {
+          type: "linear",
+          x: 0,
+          y: 0,
+          x2: 1,
+          y2: 0,
+          colorStops: [
+            {
+              offset: 0,
+              color: "#43dfa2",
+            },
+            {
+              offset: 1,
+              color: "#28f8de",
+            },
+          ],
+        },
+        linearBtoG: {
+          type: "linear",
+          x: 0,
+          y: 0,
+          x2: 1,
+          y2: 0,
+          colorStops: [
+            {
+              offset: 0,
+              color: "#1c98e8",
+            },
+            {
+              offset: 1,
+              color: "#28f8de",
+            },
+          ],
+        },
+        areaBtoG: {
+          type: "linear",
+          x: 0,
+          y: 0,
+          x2: 0,
+          y2: 1,
+          colorStops: [
+            {
+              offset: 0,
+              color: "rgba(35,184,210,.2)",
+            },
+            {
+              offset: 1,
+              color: "rgba(35,184,210,0)",
+            },
+          ],
+        },
+      },
+//预警信息表
+
+// warning: {
+//         header: ["养殖户名称", "牛编号", "品种","预警信息"],
+//         data: [
+//           ["张三", "10830", "牛","正常"],
+//           ["张四", "13500", "牛","正常"],
+//           ["张五", "10350", "牛","正常"],
+//           [],
+//           [],
+//           [],
+//         ],
+//         evenRowBGC: "#020308",
+//         oddRowBGC: "#382B47",
+//         headerBGC: "#020308",
+//       },
+
+      //锥形柱状图
+      cone: {
+        data: [
+
+          {
+            name: "大角牛",
+            value: 66,
+          },
+
+          {
+            name: "小脚牛",
+            value: 80,
+          },
+
+          {
+            name: "荷兰牛",
+            value: 45,
+          },
+
+          {
+            name: "能繁母牛",
+            value: 29,
+          },
+
+          {
+            name: "黄牛",
+            value: 55,
+          },
+          {
+            name: "夏洛莱",
+            value: 120,
+          },
+          {
+            name: "利木赞",
+            value: 78,
+          },
+
+        ],
+        showValue: true,
+      },
     };
   },
-  mounted() {
-    this.createPieChart();
-    this.createBarChart();
-    this.initMap();
+  
+  created() {
+    this.getIndexVarList();
   },
-//   created() {
-//     this.initMap();
-// },
+
+  mounted() {
+    // //获取实时时间
+    // this.timeFn();
+    //加载loading图
+    this.cancelLoading();
+    //中国地图
+    this.china_map();
+    //左侧玫瑰饼图
+    this.Rose_diagram();
+    //左侧柱状图
+    this.columnar();
+    //中间折线图
+    this.line_center_diagram();
+    //虚线柱状图
+    this.dotter_bar();
+  },
+  beforeDestroy() {
+    //离开时删除计时器
+    clearInterval(this.timing);
+  },
   methods: {
 
-    initMap() {
-      this.map = new AMap.Map("mapContainer", {
-        zoom: 8,
-        center: [123.414875, 41.908154],
-        resizeEnable: true
+    getIndexVarList() {
+    console.log("品种打印"+this.IndexVarList);
+
+      this.loading = true;
+      listagroIndex().then(response => {
+        this.IndexVarList = response.rows;
+        console.log("品种打印"+this.IndexVarList)
       });
-      console.log("调用了吗")
-
-          
-  },
-
-  createPieChart() {
-  var ctx = document.getElementById('pieChart');
-  var myChart = echarts.init(ctx, 'macarons');
-  var option = {
-    grid: {
-      left: '20%', // 设置左边距
-      containLabel: true // 是否包含坐标轴的刻度标签
     },
-    series: [{
-      type: 'pie',
-      data: [
-        { name: '牛', value: 20, itemStyle: { color: '#FF5722' } }, // 使用不同的颜色区分
-        { name: '猪', value: 30, itemStyle: { color: '#2196F3' } },
-        { name: '羊', value: 25, itemStyle: { color: '#4CAF50' } },
-        { name: '鸡', value: 15, itemStyle: { color: '#FFC107' } }
-      ]
-    }]
-  };
-  myChart.setOption(option);
-},
-    // createPieChart() {
-    //   var ctx = document.getElementById('pieChart');
-    //   var myChart = echarts.init(ctx, 'macarons');
-    //   var option = {
-    //     series: [{
-    //       type: 'pie',
-    //       data: data: [{
-    //     name: '牛',
-    //     value: 20
-    //   }]
-    //     }]
-    //   };
-    //   myChart.setOption(option); 
+
+
+
+    //右上角当前日期时间显示：每一秒更新一次最新时间
+    // timeFn() {
+    //   this.timing = setInterval(() => {
+    //     //获取当前时分秒
+    //     this.dateDay = formatTime(new Date(), "HH: mm: ss");
+    //     //获取当前年月日
+    //     this.dateYear = formatTime(new Date(), "yyyy-MM-dd");
+    //     //获取当前周几
+    //     this.dateWeek = this.weekday[new Date().getDay()];
+    //   }, 1000);
     // },
-    createBarChart() {
-      var ctx = document.getElementById('barChart'); 
-      var myChart = echarts.init(ctx, 'macarons');
-      var option = {
+    //loading图
+    cancelLoading() {
+      setTimeout(() => {
+        this.loading = false;
+      }, 500);
+    },
+    //中国地图
+    china_map() {
+      let mapChart = this.$echarts.init(document.getElementById("china-map")); //图表初始化，china-map是绑定的元素
+      window.onresize = mapChart.resize; //如果容器变大小，自适应从新构图
+      let series = []; //存放循环配置项
+      let res = []; //存放射线的起始点和结束点位置
+      let province = []; //存放有射线的省的名字，以此来拿到对应省份的坐标
+      //提前存好的所有省份坐标，用于后面根据名字拿到对应的左边
+      let chinaGeoCoordMap = {
+        新疆: [86.9023, 41.148],
+        西藏: [87.8695, 31.6846],
+        内蒙古: [110.5977, 41.3408],
+        青海: [95.2402, 35.4199],
+        四川: [102.9199, 30.1904],
+        黑龙江: [128.1445, 46.7156],
+        甘肃: [102.7129, 38.166],
+        云南: [101.0652, 24.6807],
+        广西: [108.7813, 23.6426],
+        湖南: [111.5332, 27.3779],
+        陕西: [108.5996, 33.7396],
+        广东: [113.8668, 22.8076],
+        吉林: [126.1746, 43.5938],
+        河北: [115.4004, 38.1688],
+        湖北: [112.2363, 30.8572],
+        贵州: [106.6113, 26.6385],
+        山东: [118.2402, 36.2307],
+        江西: [115.7156, 27.99],
+        河南: [113.0668, 33.8818],
+        辽宁: [123.0438, 41.0889],
+        山西: [112.4121, 36.6611],
+        安徽: [117.2461, 31.0361],
+        福建: [118.3008, 25.9277],
+        浙江: [120.498, 29.0918],
+        江苏: [119.8586, 32.915],
+        重庆: [107.7539, 29.8904],
+        宁夏: [105.9961, 37.1096],
+        海南: [109.9512, 19.2041],
+        台湾: [120.8254, 23.5986],
+        北京: [116.4551, 40.2539],
+        天津: [117.4219, 39.4189],
+        上海: [121.4648, 31.2891],
+        香港: [114.6178, 22.3242],
+        澳门: [113.5547, 21.6484],
+      };
+      //后台给的数据模拟
+      let lineData = [
+        {
+          val: 32, //数据
+          blat: [86.9023, 41.148], //发射点
+          elon: [87.8695, 31.6846], //接收点
+          bcitysim: "新疆", //发射省的名字
+          ecitysim: "西藏", //接收省的名字
+        },
+        {
+          val: 31,
+          blat: [87.8695, 31.6846],
+          elon: [95.2402, 35.4199],
+          bcitysim: "西藏",
+          ecitysim: "青海",
+        },
+        {
+          val: 33,
+          blat: [86.9023, 41.148],
+          elon: [95.2402, 35.4199],
+          bcitysim: "新疆",
+          ecitysim: "青海",
+        },
+        {
+          val: 33,
+          blat: [116.4551, 40.2539],
+          elon: [119.8586, 32.915],
+          bcitysim: "北京",
+          ecitysim: "江苏",
+        },
+        {
+          val: 33,
+          blat: [120.8254, 23.5986],
+          elon: [109.9512, 19.2041],
+          bcitysim: "台湾",
+          ecitysim: "海南",
+        },
+        {
+          val: 33,
+          blat: [120.498, 29.0918],
+          elon: [115.7156, 27.99],
+          bcitysim: "浙江",
+          ecitysim: "江西",
+        },
+        {
+          val: 33,
+          blat: [117.2461, 31.0361],
+          elon: [119.8586, 32.915],
+          bcitysim: "安徽",
+          ecitysim: "江苏",
+        },
+        {
+          val: 33,
+          blat: [117.2461, 31.0361],
+          elon: [105.9961, 37.1096],
+          bcitysim: "安徽",
+          ecitysim: "宁夏",
+        },
+        {
+          val: 33,
+          blat: [117.2461, 31.0361],
+          elon: [107.7539, 29.8904],
+          bcitysim: "安徽",
+          ecitysim: "重庆",
+        },
+        {
+          val: 33,
+          blat: [117.2461, 31.0361],
+          elon: [123.0438, 41.0889],
+          bcitysim: "安徽",
+          ecitysim: "辽宁",
+        },
+        {
+          val: 33,
+          blat: [119.8586, 32.915],
+          elon: [102.7129, 38.166],
+          bcitysim: "江苏",
+          ecitysim: "甘肃",
+        },
+        {
+          val: 33,
+          blat: [119.8586, 32.915],
+          elon: [128.1445, 46.7156],
+          bcitysim: "江苏",
+          ecitysim: "黑龙江",
+        },
+        {
+          val: 33,
+          blat: [119.8586, 32.915],
+          elon: [110.5977, 41.3408],
+          bcitysim: "江苏",
+          ecitysim: "内蒙古",
+        },
+        {
+          val: 33,
+          blat: [119.8586, 32.915],
+          elon: [101.0652, 24.6807],
+          bcitysim: "江苏",
+          ecitysim: "云南",
+        },
+        {
+          val: 33,
+          blat: [119.8586, 32.915],
+          elon: [86.9023, 41.148],
+          bcitysim: "江苏",
+          ecitysim: "新疆",
+        },
+        {
+          val: 33,
+          blat: [86.9023, 41.148],
+          elon: [110.5977, 41.3408],
+          bcitysim: "新疆",
+          ecitysim: "内蒙古",
+        },
+        {
+          val: 33,
+          blat: [86.9023, 41.148],
+          elon: [102.9199, 30.1904],
+          bcitysim: "新疆",
+          ecitysim: "四川",
+        },
+      ];
+      //循环拿到处理好的数据
+      for (var i = 0; i < lineData.length; i++) {
+        province.push(lineData[i].bcitysim); //存进去每个省的名字
+        province.push(lineData[i].ecitysim); //存进去每个省的名字
+        res.push({
+          fromName: lineData[i].bcitysim, //发射的省名，保存用于弹框显示
+          toName: lineData[i].ecitysim, //接收的省名，保存用于弹框显示
+          coords: [
+            lineData[i].blat, //发射
+            lineData[i].elon, //接收
+          ],
+          count: lineData[i].val, //数据
+        });
+      }
+      let index_data = new Set(province); //把省的名字去重
+      let data_res = []; //定义一个新的变量存放省的坐标
+
+      //注意这里一定要用name和value的形式。不是这个格式的散点图显示不出来
+      index_data.forEach((item) => {
+        data_res.push({
+          name: item, //每个省的名字
+          value: chinaGeoCoordMap[item], //每个省的坐标
+        });
+      });
+      //循环往series内添加配置项
+      series.push(
+        {
+          //射线效果图层
+          type: "lines", //类型：射线
+          zlevel: 1, //类似图层效果
+          effect: {
+            show: true, //是否显示图标
+            symbol: "arrow", //箭头图标
+            symbolSize: 5, //图标大小
+            trailLength: 0.02, //特效尾迹长度[0,1]值越大，尾迹越长重
+          },
+          label: {
+            show: true,
+          },
+          lineStyle: {
+            color: "#fff",
+            normal: {
+              color: "#00A0FF",
+              width: 1, //尾迹线条宽度
+              opacity: 0.5, //尾迹线条透明度
+              curveness: 0.1, //尾迹线条曲直度
+            },
+          },
+          //提示框信息
+          tooltip: {
+            formatter: function (param) {
+              return (
+                param.data.fromName +
+                ">" +
+                param.data.toName +
+                "<br>数量：" +
+                param.data.count
+              );
+            },
+          },
+          data: res, //拿到射线的起始点和结束点
+        },
+        //散点图
+        // {
+        //   type: "effectScatter",//散点图
+        //   coordinateSystem: "geo",//这个不能删，删了不显示
+        //   zlevel: 1,
+        //   rippleEffect: {
+        //     //涟漪特效
+        //     period: 4, //动画时间，值越小速度越快
+        //     brushType: "stroke", //波纹绘制方式 stroke, fill
+        //     scale: 4, //波纹圆环最大限制，值越大波纹越大
+        //   },
+        //   //设置文字部分
+        //   label: {
+        //     normal: {
+        //       show: true, //省份名显示隐藏
+        //       position: "right", //省份名显示位置
+        //       offset: [5, 0], //省份名偏移设置
+        //       formatter: function (params) {
+        //         //圆环显示省份名
+        //         return params.name;  //这个名字是根据data中的name来显示的
+        //       },
+        //       fontSize: 12,//文字大小
+        //     },
+        //     emphasis: {
+        //       show: true,
+        //     },
+        //   },
+        //   symbol: "circle",//散点图
+        //   symbolSize: 5,//散点大小
+        //   itemStyle: {//散点样式
+        //     normal: {
+        //       show: true,
+        //       color: "#fff",
+        //     },
+        //   },
+        //   data: data_res, //处理好后的散点图坐标数组
+        // },
+        //点击高亮
+        {
+          type: "map",
+          mapType: "china",
+          zlevel: 1,
+          roam: true,
+          geoIndex: 0,
+          tooltip: {
+            show: true,
+          },
+          itemStyle: {
+            areaColor: "#00196d",
+            borderColor: "#0a53e9",
+          },
+          emphasis: {
+            show: true,
+            label: {
+              normal: {
+                show: true, // 是否显示对应地名
+                textStyle: {
+                  color: "#fff",
+                },
+              },
+            },
+            itemStyle: {
+              areaColor: "#00196d",
+              borderColor: "#0a53e9",
+            },
+          },
+        }
+      );
+      //配置
+      let option = {
+        //title可要可不要
+
+        // title: {
+        //   text: "查查的地图",
+        //   textStyle: {
+        //     color: "#ffffff",
+        //   },
+        // },
+        legend: {
+          show: true,
+          selected: {},
+          x: "left",
+          orient: "vertical",
+          textStyle: {
+            color: "white",
+          },
+          data: [],
+        },
+        //鼠标移上去的弹框
+        tooltip: {
+          trigger: "item",
+          show: true,
+        },
+        //geo：这是重点
+        geo: {
+          map: "china", //中国地图
+          zoom: 1.2, //缩放倍数
+          roam: false, //是否允许缩放和拖拽地图
+          label: {
+            normal: {
+              show: true, // 是否显示省份名字，现在是隐藏的状态，因为和散点图的名字重叠了。如果需要就true
+              textStyle: {
+                //名字的样式
+                color: "#fff",
+              },
+            },
+            emphasis: {
+              show: true,
+            },
+          },
+          //地图样式
+          itemStyle: {
+            normal: {
+              borderColor: "#293171", //地图边框颜色
+              borderWidth: "2", //地图边框粗细
+              areaColor: "#0A0F33", //地图背景色
+            },
+            //省份地图阴影
+            emphasis: {
+              areaColor: null,
+              shadowOffsetX: 0,
+              shadowOffsetY: 0,
+              shadowBlur: 20,
+              borderWidth: 0,
+              shadowColor: "#fff",
+            },
+          },
+        },
+        series: series, //图表配置
+      };
+      mapChart.setOption(option); //生成图表
+    },
+    //玫瑰饼图
+    Rose_diagram() {
+      let mapChart = this.$echarts.init(
+        document.getElementById("Rose_diagram")
+      ); //图表初始化，china-map是绑定的元素
+      window.onresize = mapChart.resize; //如果容器变大小，自适应从新构图
+      let option = {
+        color: [
+          "#37a2da",
+          "#32c5e9",
+          "#9fe6b8",
+          "#ffdb5c",
+          "#ff9f7f",
+          "#fb7293",
+          "#e7bcf3",
+          "#8378ea",
+        ],
+        tooltip: {
+          trigger: "item",
+          formatter: "{a} <br/>{b} : {c} ({d}%)",
+        },
+        toolbox: {
+          show: true,
+        },
+        calculable: true,
+        legend: {
+          orient: "horizontal",
+          icon: "circle",
+          bottom: 0,
+          x: "center",
+          data: ["data1", "data2", "data3", "data4", "data5", "data6"],
+          textStyle: {
+            color: "#fff",
+          },
+        },
+        series: [
+          {
+            name: "通过率统计",
+            type: "pie",
+            radius: [10, 50],
+            roseType: "area",
+            center: ["50%", "40%"],
+            data: [
+              { value: 10, name: "data1" },
+              { value: 5, name: "data2" },
+              { value: 15, name: "data3" },
+              { value: 25, name: "data4" },
+              { value: 20, name: "data5" },
+              { value: 35, name: "data6" },
+            ],
+          },
+        ],
+      };
+      mapChart.setOption(option); //生成图表
+    },
+    //柱状图
+    columnar() {
+      let mapChart = this.$echarts.init(document.getElementById("columnar")); //图表初始化，china-map是绑定的元素
+      window.onresize = mapChart.resize; //如果容器变大小，自适应从新构图
+      let option = {
+        title: {
+          text: "",
+        },
+        tooltip: {
+          trigger: "axis",
+          backgroundColor: "rgba(255,255,255,0.1)",
+          axisPointer: {
+            type: "shadow",
+            label: {
+              show: true,
+              backgroundColor: "#7B7DDC",
+            },
+          },
+        },
+        legend: {
+          data: ["在线数量", "实际数量", "在线率"],
+          textStyle: {
+            color: "#B4B4B4",
+          },
+          top: "0%",
+        },
+        grid: {
+          x: "8%",
+          width: "95%",
+          y: "4%",
+        },
         xAxis: {
-          type: 'category',
-          data: ['牛']
+          data: [
+            "黄牛",
+            "夏洛莱",
+            "利木赞",
+            "大角牛",
+            "小脚牛",
+            "育肥牛",
+            "荷兰牛",
+            "能繁母牛",
+            
+          ],
+          axisLine: {
+            lineStyle: {
+              color: "#B4B4B4",
+            },
+          },
+          axisTick: {
+            show: false,
+          },
+        },
+        yAxis: [
+          {
+            splitLine: { show: false },
+            axisLine: {
+              lineStyle: {
+                color: "#B4B4B4",
+              },
+            },
+
+            axisLabel: {
+              formatter: "{value} ",
+            },
+          },
+        ],
+        series: [
+          {
+            name: "在线数量",
+            type: "bar",
+            barWidth: 10,
+            itemStyle: {
+              normal: {
+                barBorderRadius: 5,
+                color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                  { offset: 0, color: "#956FD4" },
+                  { offset: 1, color: "#3EACE5" },
+                ]),
+              },
+            },
+            data: [
+              46, 50, 55, 650, 75, 85, 99, 125,
+            ],
+          },
+          {
+            name: "实际数量",
+            type: "bar",
+            barGap: "-100%",
+            barWidth: 10,
+            itemStyle: {
+              normal: {
+                barBorderRadius: 5,
+                color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                  { offset: 0, color: "rgba(156,107,211,0.8)" },
+                  { offset: 0.2, color: "rgba(156,107,211,0.5)" },
+                  { offset: 1, color: "rgba(156,107,211,0.2)" },
+                ]),
+              },
+            },
+            z: -12,
+            data: [
+              180, 207, 240, 283, 328, 360, 398, 447,
+            ],
+          },
+        ],
+      };
+      mapChart.setOption(option); //生成图表
+    },
+    //折线图
+    line_center_diagram() {
+      let mapChart = this.$echarts.init(
+        document.getElementById("line_center_diagram")
+      ); //图表初始化，china-map是绑定的元素
+      window.onresize = mapChart.resize; //如果容器变大小，自适应从新构图
+      let option = {
+        xAxis: {
+          type: "category",
+          data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+          position: "bottom",
+          axisLine: true,
+          axisLabel: {
+            color: "rgba(255,255,255,.8)",
+            fontSize: 12,
+          },
         },
         yAxis: {
-          type: 'value'
+          type: "value",
+          name: "年度生产量",
+          nameLocation: "end",
+          nameGap: 24,
+          nameTextStyle: {
+            color: "rgba(255,255,255,.5)",
+            fontSize: 14,
+          },
+          splitNumber: 4,
+          axisLine: {
+            lineStyle: {
+              opacity: 0,
+            },
+          },
+          splitLine: {
+            show: true,
+            lineStyle: {
+              color: "#fff",
+              opacity: 0.1,
+            },
+          },
+          axisLabel: {
+            color: "rgba(255,255,255,.8)",
+            fontSize: 12,
+          },
         },
-        series: [{
-          data: [20],
-          type: 'bar'
-        }]
+        grid: {
+          left: 50,
+          right: 10,
+          bottom: 25,
+          top: "18%",
+        },
+        series: [
+          {
+            data: [820, 932, 901, 934, 1290, 1330, 1320],
+            type: "line",
+            smooth: true,
+            symbol: "emptyCircle",
+            symbolSize: 8,
+            itemStyle: {
+              normal: {
+                color: "#fff",
+              },
+            },
+            //线的颜色样式
+            lineStyle: {
+              normal: {
+                color: this.colorList.linearBtoG,
+                width: 3,
+              },
+            },
+            //填充颜色样式
+            areaStyle: {
+              normal: {
+                color: this.colorList.areaBtoG,
+              },
+            },
+          },
+        ],
       };
-      myChart.setOption(option);
-    }
-  }
+      mapChart.setOption(option); //生成图表
+    },
+    //右侧虚线柱状图图
+    dotter_bar() {
+      let mapChart = this.$echarts.init(document.getElementById("dotter_bar")); //图表初始化，china-map是绑定的元素
+      window.onresize = mapChart.resize; //如果容器变大小，自适应从新构图
+      // Generate data
+      let category = [];
+      let dottedBase = +new Date();
+      let lineData = [];
+      let barData = [];
+      for (let i = 0; i < 20; i++) {
+        let date = new Date((dottedBase += 3600 * 24 * 1000));
+        category.push(
+          [date.getFullYear(), date.getMonth() + 1, date.getDate()].join("-")
+        );
+        let b = Math.random() * 200;
+        let d = Math.random() * 200;
+        barData.push(b);
+        lineData.push(d + b);
+      }
+      // option
+      let option = {
+        tooltip: {
+          trigger: "axis",
+          axisPointer: {
+            type: "shadow",
+          },
+        },
+        grid: {
+          left: 50,
+          right: 10,
+          bottom: 25,
+          top: "18%",
+        },
+        legend: {
+          data: ["line", "bar"],
+          textStyle: {
+            color: "#ccc",
+          },
+        },
+        xAxis: {
+          data: category,
+          axisLine: {
+            lineStyle: {
+              color: "#ccc",
+            },
+          },
+        },
+        yAxis: {
+          splitLine: { show: false },
+          axisLine: {
+            lineStyle: {
+              color: "#ccc",
+            },
+          },
+        },
+        series: [
+          {
+            name: "line",
+            type: "line",
+            smooth: true,
+            showAllSymbol: true,
+            symbol: "emptyCircle",
+            symbolSize: 15,
+            data: lineData,
+          },
+          {
+            name: "bar",
+            type: "bar",
+            barWidth: 10,
+            itemStyle: {
+              borderRadius: 5,
+              // color: "#14c8d4",
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: "#14c8d4" },
+                { offset: 1, color: "#43eec6" },
+              ]),
+            },
+            data: barData,
+          },
+          {
+            name: "line",
+            type: "bar",
+            barGap: "-100%",
+            barWidth: 10,
+            itemStyle: {
+              // color: "rgba(20,200,212,0.5)",
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: "rgba(20,200,212,0.5)" },
+                { offset: 0.2, color: "rgba(20,200,212,0.2)" },
+                { offset: 1, color: "rgba(20,200,212,0)" },
+              ]),
+            },
+            z: -12,
+            data: lineData,
+          },
+          {
+            name: "dotted",
+            type: "pictorialBar",
+            symbol: "rect",
+            itemStyle: {
+              color: "#0f375f",
+            },
+            symbolRepeat: true,
+            symbolSize: [12, 4],
+            symbolMargin: 1,
+            z: -10,
+            data: lineData,
+          },
+        ],
+      };
+      mapChart.setOption(option); //生成图表
+    },
+  },
 };
 </script>
 
-<style scoped>
-/* 样式可以根据您的需求自行调整 */
-.app-container {
-  display: flex;
-  justify-content: space-between;
-  /* max-width: 1330px; */
-  margin: 0 auto;/* 宽度自适应 */
-  height: auto; /* 高度自适应 */
-  background-color: #001f3f; /* 深蓝色 */
-  /* gap: 10px; 列之间的间隔为10px */
-}
-
-.box {
-  margin-bottom: 20px;
-  padding: 20px;
+<style lang="scss">
+//全局样式部分！！！！
+* {
+  margin: 0px;
+  padding: 0px;
+  list-style-type: none;
+  outline: none;
   box-sizing: border-box;
 }
 
-.blue {
-  background-color: #3573a8; /* 蓝色 */
-  color: #fff; /* 文字颜色 */
+html {
+  margin: 0;
+  padding: 0;
 }
 
-.map-container {
-  width: 100%;
-  height: 90%;
-  /* width: 455px;
-  height: 390px; */
-  margin-top: 38px; /* 向下移动 20px */
+// body {
+//   font-family: Arial, Helvetica, sans-serif;
+//   // line-height: 1.2em;
+//   background-color: #f1f1f1;
+//   margin: 0;
+//   padding: 0;
+// }
+
+a {
+  color: #343440;
+  text-decoration: none;
+}
+//--------------------------------------------
+
+//页面样式部分！！！！
+.container {
+  color: #d3d6dd;
+  width: 100%; /* 初始宽度为100% */
+  max-width: 1700px; /* 最大宽度限制为1700px */
+  height: auto; /* 高度自适应 */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transform-origin: left top;
+  overflow: visible; /* 尝试修改 overflow 属性为 visible */
 }
 
-.left-column,
-.middle-column,
-.right-column {
-  /* flex: 1;
-  display: flex;
-  flex-direction: column;
-  width: calc(33.33% - 10px); */
-  flex-grow: 1; /* 等分剩余空间 */
-  display: flex;
-  flex-direction: column;
-  width: calc(33.33% - 10px); /* 计算宽度，考虑到间隙 */
-  margin-right: 10px; /* 为了留出间隙 */
-
+.container-inner {
+  width: 50%;
 }
 
-.big-box,
-.small-box {
-  flex: 1;
+#index {
+  color: #d3d6dd;
+  width: 1920px;
+  height: 1080px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transform-origin: left top;
+  overflow: hidden;
+  .bg {
+    //整体页面背景
+    width: 100%;
+    height: 100%;
+    padding: 16px 16px 0 16px;
+    background-image: url("../assets/images/background.png"); //背景图
+    background-size: cover; //背景尺寸
+    background-position: center center; //背景位置
+  }
+  //顶部右边装饰效果
+  .title_left {
+    width: 100%;
+    height: 50px;
+  }
+  //顶部左边装饰效果
+  .title_right {
+    width: 100%;
+    height: 50px;
+    margin-top: 18px;
+  }
+  //顶部中间装饰效果
+  .title_center {
+    width: 100%;
+    height: 5px;
+  }
+  //顶部中间陶源生物资产监管系统
+  .title_text {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 30px;
+    color: #008cff;
+  }
+  //时间日期
+  .title_time {
+    text-align: center;
+  }
+  //中国地图
+  #china-map {
+    height: 660px;
+    width: 100%;
+  }
+  //中间折线图
+  .line_center {
+    width: 100%;
+    height: 288px;
+  }
+  //左1模块
+  .left_box1 {
+    height: 310px;
+    width: 100%;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  //左2模块
+  .left_box2 {
+    height: 310px;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  //左3模块
+  .left_box3 {
+    height: 310px;
+    width: 100%;
+  }
+  //右1模块
+  .right_box1 {
+    height: 310px;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  //右2模块
+  .right_box2 {
+    height: 310px;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  //右3模块
+  .right_box3 {
+    height: 310px;
+    width: 100%;
+  }
+  //左1模块-玫瑰饼图
+  #Rose_diagram {
+    height: 70%;
+    width: 55%;
+  }
+  //左1模块-圆环图
+  .left_box1_rose_right {
+    height: 85%;
+    width: 55%;
+    position: absolute;
+    right: 0;
+    top: 30px;
+  }
+  //左1模块-文字部分
+  .rose_text {
+    display: inline-block;
+    margin-top: 4%;
+    margin-left: 4%;
+  }
+  // 左1模块-￥符号样式
+  .coin {
+    font-size: 20px;
+    color: #ffc107;
+  }
+  //左1模块-（件）样式
+  .colorYellow {
+    color: yellowgreen;
+  }
+  //左1模块-数字样式
+  .rose_text_nmb {
+    font-size: 20px;
+    color: #00b891;
+  }
+  //左2模块 柱状图
+  #columnar {
+    height: 97%;
+    width: 95%;
+    margin-left: 3%;
+    margin-top: 10px;
+  }
+  //折线图
+  #line_center_diagram {
+    height: 100%;
+    width: 100%;
+  }
+  //轮播表格
+  .carousel_list {
+    width: 96%;
+    height: 98%;
+    margin-left: 10px;
+  }
+  //虚线柱状图
+  #dotter_bar {
+    width: 100%;
+    height: 100%;
+  }
+  //锥形图
+  .cone_box {
+    width: 95%;
+    height: 97%;
+    margin-left: 3%;
+  }
 }
 
-.bigger-box {
-  height: 470px; /* 调整更大的盒子的高度 */
-
-  font-size: 24px; /* 调整更大的盒子的文字大小 */
-  line-height: 10px; /* 垂直居中文本，这里是盒子高度的一半 */
-  vertical-align: middle; /* 垂直居中文本 */
-  text-align: center; /* 水平居中文本 */
+//预警信息背景透明
+.el-table, .el-table__expanded-cell, tr, .el-table__cell {
+  background-color: transparent !important;
 }
 
-.monitoring-table {
-  border-collapse: collapse; /* 合并边框 */
-  width: 100%;
-}
 
-.monitoring-table th,
-.monitoring-table td {
-  border: 1px solid #ddd; /* 设置单元格边框样式 */
-  padding: 8px; /* 设置单元格内边距 */
-  text-align: left; /* 文字左对齐 */
-}
-
-.monitoring-table th {
-  background-color: #f2f2f2; /* 设置表头背景颜色 */
-  color: #333; /* 设置表头文字颜色 */
-}
 </style>
 

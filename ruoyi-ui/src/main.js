@@ -2,9 +2,21 @@ import Vue from 'vue'
 
 import Cookies from 'js-cookie'
 
+// 将自动注册所有组件为全局组件4.15
+import dataV from '@jiaminghi/data-view'
+Vue.use(dataV)
+//  import ElementUI from 'element-ui';
+//  import 'element-ui/lib/theme-chalk/index.css';
+//  Vue.use(ElementUI);
+import geoJson from '@/views/china.json'
+echarts.registerMap('china', geoJson);
+import * as echarts from 'echarts'
+Vue.prototype.$echarts = echarts
+
+  
+
 import Element from 'element-ui'
 import './assets/styles/element-variables.scss'
-
 import '@/assets/styles/index.scss' // global css
 import '@/assets/styles/ruoyi.scss' // ruoyi css
 import App from './App'
