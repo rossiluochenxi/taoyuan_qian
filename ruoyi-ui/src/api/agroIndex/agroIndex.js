@@ -7,3 +7,11 @@ export function listagroIndex() {
     method: 'get',
   })
 }
+
+// 查询养殖户牲畜排名
+export function listagroRankingFarmers() {
+  return request({
+    url: '/agro/index/agroNumlist',
+    method: 'get',
+  })
+}

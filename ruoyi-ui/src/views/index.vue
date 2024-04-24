@@ -42,15 +42,15 @@
                     v-for="(item, index) in numberData"
                     :key="index"
                   >
-                    <p>
+                    <!-- <p>
                       <span class="coin">￥</span>
                       <span class="rose_text_nmb">{{
                         item.number.number
                       }}</span>
-                    </p>
+                    </p> -->
                     <p>
                       <span>{{ item.text }}</span>
-                      <span class="colorYellow">(头)</span>
+                      <span class="colorYellow"></span>
                     </p>
                   </div>
                 </dv-border-box-12>
@@ -143,7 +143,7 @@
                                 >养 殖 户 排 名</dv-decoration-7
                               >
                               <dv-scroll-ranking-board
-                                :config="farmer"
+                                :config="userNum"
                                 style="width: 95%; height: 87%; margin-left: 2%"
                               />
                               </dv-border-box-12>
@@ -190,13 +190,16 @@
 
 
 import drawMixin from "./drawMixin"; //自适应缩放
-import { listagroIndex } from "@/api/agroIndex/agroIndex";//首页品种数量
+import { listagroIndex,listagroRankingFarmers } from "@/api/agroIndex/agroIndex";//首页品种数量
+
 // import { formatTime } from "../utils/index.js"; //日期格式转换
 import * as echarts from 'echarts'
 export default {
   mixins: [drawMixin],
   data() {
     return {
+      //首页用户排名
+      agroNumlist: [],
       //首页品种集合
       IndexVarList: [],
       //定时器
@@ -246,37 +249,8 @@ export default {
       }],
 
       //轮播养殖户排名
-      farmer: {
-        data: [
-          {
-            name: "张三",
-            value: 55,
-          },
-          {
-            name: "李四",
-            value: 12,
-          },
-          {
-            name: "王五",
-            value: 78,
-          },
-          {
-            name: "小吴",
-            value: 66,
-          },
-          {
-            name: "小黄",
-            value: 80,
-          },
-          {
-            name: "小江",
-            value: 172,
-          },
-          {
-            name: "小李",
-            value: 29,
-          },
-        ],
+      userNum: {
+        data: [],
       },
       //轮播品种排行榜
       config: {
@@ -435,6 +409,7 @@ export default {
   },
   created() {
     this.getIndexVarList();
+    this.getAgroNumlist();
   },
 
   mounted() {
@@ -448,7 +423,7 @@ export default {
     this.china_map();
     //左侧玫瑰饼图
     this.Rose_diagram();
-
+    
     //中间折线图
     this.line_center_diagram();
     //虚线柱状图
@@ -468,7 +443,7 @@ export default {
     const rows = response.rows;
 
     // 将获取的数据赋值给 IndexVarList
-    this.IndexVarList = rows;
+    // this.IndexVarList = rows;
 
     // 对数据进行格式化并赋值给 config 对象中的 data 属性
     const formattedData = rows.map(item => {
@@ -480,8 +455,9 @@ export default {
     this.$delete(this.config,'data');
     this.$set(this.config, 'data', formattedData);
     // this.config.data=formattedData;
+    
        //左侧柱状图
-        this.columnar();
+    this.columnar();
     this.loading = false; // 数据加载完成后设置 loading 为 false
   }).catch(error => {
     console.error('获取数据出错：', error);
@@ -489,6 +465,33 @@ export default {
   });
 },
 
+getAgroNumlist() {
+  this.loading = true;
+  listagroRankingFarmers().then(response => {
+    // 获取后端返回的数据
+    const rows = response.rows;
+
+    // 将获取的数据赋值给 IndexVarList
+    // this.agroNumlist = rows;
+
+    // 对数据进行格式化并赋值给 config 对象中的 data 属性
+    const formattedData = rows.map(item => {
+      return {
+        value: parseInt(item.num), // 将字符串转换为整数
+        name: item.agroUserName
+      };
+    });
+    this.$delete(this.userNum,'data');
+    this.$set(this.userNum, 'data', formattedData);
+    // this.config.data=formattedData;
+    
+         
+    this.loading = false; // 数据加载完成后设置 loading 为 false
+  }).catch(error => {
+    console.error('获取数据出错：', error);
+    this.loading = false; // 数据加载出错时也需要设置 loading 为 false
+  });
+},
 
 
 
@@ -871,59 +874,50 @@ export default {
     },
     //玫瑰饼图
     Rose_diagram() {
-      let mapChart = this.$echarts.init(
-        document.getElementById("Rose_diagram")
-      ); //图表初始化，china-map是绑定的元素
-      window.onresize = mapChart.resize; //如果容器变大小，自适应从新构图
-      let option = {
-        color: [
-          "#37a2da",
-          "#32c5e9",
-          "#9fe6b8",
-          "#ffdb5c",
-          "#ff9f7f",
-          "#fb7293",
-          "#e7bcf3",
-          "#8378ea",
-        ],
-        tooltip: {
-          trigger: "item",
-          formatter: "{a} <br/>{b} : {c} ({d}%)",
-        },
-        toolbox: {
-          show: true,
-        },
-        calculable: true,
-        legend: {
-          orient: "horizontal",
-          icon: "circle",
-          bottom: 0,
-          x: "center",
-          data: ["data1", "data2", "data3", "data4", "data5", "data6"],
-          textStyle: {
-            color: "#fff",
-          },
-        },
-        series: [
-          {
-            name: "通过率统计",
-            type: "pie",
-            radius: [10, 50],
-            roseType: "area",
-            center: ["50%", "40%"],
-            data: [
-              { value: 10, name: "data1" },
-              { value: 5, name: "data2" },
-              { value: 15, name: "data3" },
-              { value: 25, name: "data4" },
-              { value: 20, name: "data5" },
-              { value: 35, name: "data6" },
-            ],
-          },
-        ],
-      };
-      mapChart.setOption(option); //生成图表
+  let mapChart = this.$echarts.init(
+    document.getElementById("Rose_diagram")
+  ); //图表初始化，china-map是绑定的元素
+  window.onresize = mapChart.resize; //如果容器变大小，自适应从新构图
+  let option = {
+    color: [
+      "#37a2da",
+      "#32c5e9",
+      "#9fe6b8",
+      "#ffdb5c",
+      "#ff9f7f",
+      "#fb7293",
+      "#e7bcf3",
+      "#8378ea",
+    ],
+    tooltip: {
+      trigger: "item",
+      formatter: "{a} <br/>{b} : {c} ({d}%)",
     },
+    toolbox: {
+      show: true,
+    },
+    calculable: true,
+    series: [
+      {
+        name: "通过率统计",
+        type: "pie",
+        radius: [10, 50],
+        roseType: "area",
+        center: ["50%", "40%"],
+        data: [
+          { value: 10, name: "data1" },
+          { value: 5, name: "data2" },
+          { value: 15, name: "data3" },
+          { value: 25, name: "data4" },
+          { value: 20, name: "data5" },
+          { value: 35, name: "data6" },
+        ],
+      },
+    ],
+  };
+  mapChart.setOption(option); //生成图表
+},
+
     //柱状图
     columnar() {
       let mapChart = this.$echarts.init(document.getElementById("columnar")); //图表初始化，china-map是绑定的元素
@@ -1249,7 +1243,7 @@ a {
   }
   //左1模块-玫瑰饼图
   #Rose_diagram {
-    height: 70%;
+    height: 80%;
     width: 55%;
   }
   //左1模块-圆环图
@@ -1258,7 +1252,7 @@ a {
     width: 55%;
     position: absolute;
     right: 0;
-    top: 30px;
+    top: 50px;
   }
   //左1模块-文字部分
   .rose_text {
