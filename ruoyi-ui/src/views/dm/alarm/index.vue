@@ -276,8 +276,9 @@
       <el-table-column label="rsrp" align="center" prop="rsrp" />
       <el-table-column label="pci" align="center" prop="pci" /> -->
       <el-table-column label="报警时间" align="center" prop="date" width="180">
+
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.date, '{y}-{m}-{d}') }}</span>
+          <span>{{  formatDate(scope.row.date) }}</span>
         </template>
       </el-table-column>
       <!-- <el-table-column label="部门id" align="center" prop="deptId" />
@@ -550,6 +551,21 @@ export default {
         this.title = "修改报警数据";
       });
     },
+       formatDate(dateString) {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    month = month < 10 ? '0' + month : month;
+    let day = date.getDate();
+    day = day < 10 ? '0' + day : day;
+    let hours = date.getHours();
+    hours = hours < 10 ? '0' + hours : hours;
+    let minutes = date.getMinutes();
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    let seconds = date.getSeconds();
+    seconds = seconds < 10 ? '0' + seconds : seconds;
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
