@@ -501,11 +501,15 @@ export default {
       }, `rtdata_${new Date().getTime()}.xlsx`)
     },
     //颜色
+    //颜色
      getTemperatureColor(temperature) {
-    if (temperature >= 38.5 && temperature <= 39.5) {
-      return 'green'; // 正常范围，显示绿色
+     var lowerLimit = 38.5;
+     var upperLimit = 39.5;
+
+    if (temperature < lowerLimit || temperature > upperLimit) {
+        return 'red'; // 超出正常范围，显示红色
     } else {
-      return 'red'; // 超出正常范围，显示红色
+        return 'green'; // 正常范围，显示绿色
     }
   }
   }

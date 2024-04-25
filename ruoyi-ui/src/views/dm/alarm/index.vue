@@ -258,8 +258,11 @@
       <el-table-column label="设备类型" align="center" prop="deviceType" />
       <!-- <el-table-column label="imei" align="center" prop="imei" /> -->
       <!-- <el-table-column label="平台设备号" align="center" prop="deviceId" /> -->
-      <el-table-column label="温度" align="center" prop="temperature" />
-      <el-table-column label="步数" align="center" prop="step" />
+      <el-table-column label="温度" align="center" prop="temperature">
+  <template slot-scope="scope">
+    <span :style="{ color: getTemperatureColor(scope.row.temperature) }">{{ scope.row.temperature }}</span>
+  </template>
+</el-table-column>      <el-table-column label="步数" align="center" prop="step" />
       <el-table-column label="电量" align="center" prop="drycell" />
       <el-table-column label="体重" align="center" prop="weight" />
       <!-- <el-table-column label="牲畜所在经度" align="center" prop="livestockLon" />
@@ -580,7 +583,18 @@ export default {
       this.download('dm/alarm/export', {
         ...this.queryParams
       }, `alarm_${new Date().getTime()}.xlsx`)
+    },
+      //颜色
+  getTemperatureColor(temperature) {
+     var lowerLimit = 38.5;
+     var upperLimit = 39.5;
+
+    if (temperature < lowerLimit || temperature > upperLimit) {
+        return 'red'; // 超出正常范围，显示红色
+    } else {
+        return 'green'; // 正常范围，显示绿色
     }
+  }
   }
 };
 </script>
