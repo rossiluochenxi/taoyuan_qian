@@ -68,13 +68,15 @@
 
                     <el-table class="el-table" :data="tableData" height="100%"
                       style="width: 98%;margin-left: 10px;margin-top:-15px; ">
-                      <el-table-column prop="farmer" label="养殖户名称" width="180">
+                      <el-table-column prop="agroUserName" label="养殖户" width="180">
                       </el-table-column>
-                      <el-table-column prop="cowNumber" label="牛编号" width="180">
+                      <el-table-column prop="agroLivestockIccid" label="设备编号" width="180">
                       </el-table-column>
-                      <el-table-column prop="breed" label="品种">
+                      <el-table-column prop="livestockVarieties" label="品种">
                       </el-table-column>
-                      <el-table-column prop="content" label="预警信息">
+                      <el-table-column prop="info" label="预警信息">
+                      </el-table-column>
+                      <el-table-column prop="date" label="预警时间">
                       </el-table-column>
                     </el-table>
                   </div>
@@ -152,7 +154,7 @@
 
 
 import drawMixin from "./drawMixin"; //自适应缩放
-import { listagroIndex, listagroRankingFarmers } from "@/api/agroIndex/agroIndex";//首页品种数量
+import { listagroIndex, listagroRankingFarmers,dmAlarmDataIndexList} from "@/api/agroIndex/agroIndex";//首页品种数量
 
 // import { formatTime } from "../utils/index.js"; //日期格式转换
 import * as echarts from 'echarts'
@@ -178,37 +180,7 @@ export default {
       weekday: ["周日", "周一", "周二", "周三", "周四", "周五", "周六"],
 
       //预警信息
-      tableData: [{
-        farmer: '张三',
-        cowNumber: '001',
-        breed: '荷斯坦',
-        content: '健康状况良好'
-      }, {
-        farmer: '李四',
-        cowNumber: '002',
-        breed: '安格斯',
-        content: '产奶量上升'
-      }, {
-        farmer: '王五',
-        cowNumber: '003',
-        breed: '杰洛斯',
-        content: '需注意疫苗注射'
-      }, {
-        farmer: '张三',
-        cowNumber: '001',
-        breed: '荷斯坦',
-        content: '健康状况良好'
-      }, {
-        farmer: '李四',
-        cowNumber: '002',
-        breed: '安格斯',
-        content: '产奶量上升'
-      }, {
-        farmer: '王五',
-        cowNumber: '003',
-        breed: '杰洛斯',
-        content: '需注意疫苗注射'
-      }],
+      tableData: [],
 
       //轮播养殖户排名
       userNum: {
@@ -372,6 +344,7 @@ export default {
   created() {
     this.getIndexVarList();
     this.getAgroNumlist();
+    this.getDmAlarmDataIndexList();
   },
 
   mounted() {
@@ -456,6 +429,22 @@ export default {
       });
     },
 
+    //报警数据
+    getDmAlarmDataIndexList() {
+      this.loading = true;
+      dmAlarmDataIndexList().then(response => {
+        // 获取后端返回的数据
+    this.tableData = response.rows;
+
+
+
+
+        this.loading = false; // 数据加载完成后设置 loading 为 false
+      }).catch(error => {
+        console.error('获取数据出错：', error);
+        this.loading = false; // 数据加载出错时也需要设置 loading 为 false
+      });
+    },
 
     //loading图
     cancelLoading() {

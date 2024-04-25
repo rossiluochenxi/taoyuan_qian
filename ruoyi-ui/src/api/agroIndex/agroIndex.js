@@ -15,3 +15,11 @@ export function listagroRankingFarmers() {
     method: 'get',
   })
 }
+
+// 首页报警数据api
+export function dmAlarmDataIndexList() {
+  return request({ 
+    url: '/dm/alarm/indexList',
+    method: 'get',
+  })
+}

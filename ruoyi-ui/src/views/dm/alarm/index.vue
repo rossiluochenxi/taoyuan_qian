@@ -249,9 +249,9 @@
        border resizable
      auto-resize="true">
       <el-table-column type="selection" width="55" align="center" />
-      <!-- <el-table-column label="id" align="center" prop="id" />
+      <!-- <el-table-column label="id" align="center" prop="id" /> -->
       <el-table-column label="报警信息" align="center" prop="info" />
-      <el-table-column label="养殖户id" align="center" prop="agroUserId" /> -->
+      <!-- <el-table-column label="养殖户id" align="center" prop="agroUserId" /> -->
       <el-table-column label="养殖户" align="center" prop="agroUserName" />
       <!-- <el-table-column label="牲畜档案id" align="center" prop="agroLivestockId" /> -->
       <el-table-column label="耳标" align="center" prop="agroLivestockCode" />
@@ -285,20 +285,20 @@
       <el-table-column label="用户id" align="center" prop="userId" /> -->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button
+          <!-- <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['dm:alarm:edit']"
-          >修改</el-button>
+          >修改</el-button> -->
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['dm:alarm:remove']"
-          >删除</el-button>
+          >已处理</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -589,7 +589,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除报警数据编号为"' + ids + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认已处理该报警信息？').then(function() {
         return delAlarm(ids);
       }).then(() => {
         this.getList();
