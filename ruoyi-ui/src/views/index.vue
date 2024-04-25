@@ -6,24 +6,15 @@
         <div>
           <!-- 顶部title部分 -->
           <el-row>
-            <el-col :span="6"
-              ><dv-decoration-8
-                class="title_right"
-                :color="['#008CFF', '#00ADDD']"
-            /></el-col>
-            <el-col :span="12"
-              ><div class="title_text">陶 源 生 物 资 产 监 管 系 统</div>
-              <dv-decoration-5
-                class="title_center"
-                :color="['#008CFF', '#00ADDD']"
-            /></el-col>
-            <el-col :span="6"
-              ><div class="title_time">{{ dateYear + dateWeek + dateDay }}</div>
-              <dv-decoration-8
-                :reverse="true"
-                class="title_left"
-                :color="['#008CFF', '#00ADDD']"
-            /></el-col>
+            <el-col :span="6"><dv-decoration-8 class="title_right" :color="['#008CFF', '#00ADDD']" /></el-col>
+            <el-col :span="12">
+              <div class="title_text">陶 源 生 物 资 产 监 管 系 统</div>
+              <dv-decoration-5 class="title_center" :color="['#008CFF', '#00ADDD']" />
+            </el-col>
+            <el-col :span="6">
+              <div class="title_time">{{ dateYear + dateWeek + dateDay }}</div>
+              <dv-decoration-8 :reverse="true" class="title_left" :color="['#008CFF', '#00ADDD']" />
+            </el-col>
           </el-row>
           <!-- 主体部分 -->
           <el-row>
@@ -33,15 +24,8 @@
               <div class="left_box1">
                 <dv-border-box-12 :border="false">
                   <div id="Rose_diagram"></div>
-                  <dv-active-ring-chart
-                    :config="config"
-                    class="left_box1_rose_right"
-                  />
-                  <div
-                    class="rose_text"
-                    v-for="(item, index) in numberData"
-                    :key="index"
-                  >
+                  <dv-active-ring-chart :config="config" class="left_box1_rose_right" />
+                  <div class="rose_text" v-for="(item, index) in numberData" :key="index">
                     <!-- <p>
                       <span class="coin">￥</span>
                       <span class="rose_text_nmb">{{
@@ -65,11 +49,7 @@
               <!-- 轮播表格部分 -->
               <div class="left_box3">
                 <dv-border-box-12 style="padding-top: 10px">
-                  <dv-scroll-board
-                    :config="board_info"
-                    class="carousel_list"
-                    oddRowBGC="#fff"
-                  />
+                  <dv-scroll-board :config="board_info" class="carousel_list" oddRowBGC="#fff" />
                 </dv-border-box-12>
               </div>
             </el-col>
@@ -78,42 +58,29 @@
               <!-- 中国地图 -->
               <div id="china-map"></div>
               <!-- 折线图 -预警表-->
-                <dv-border-box-8>
-                  <div id="line_center_diagram"></div>
-                </dv-border-box-8>
-               
-                <dv-border-box-12 style="padding-top: 38px">
-                  <div class="warning_table">
-                    <div style="height: 250px; overflow-y: auto;">
+              <dv-border-box-8>
+                <div id="line_center_diagram"></div>
+              </dv-border-box-8>
 
-                      <el-table
-                      class="el-table"
-                        :data="tableData"
-                        height="100%"
-                        style="width: 98%;margin-left: 10px;margin-top:-15px; ">  
-                        <el-table-column
-                          prop="farmer"
-                          label="养殖户名称"
-                          width="180">
-                        </el-table-column>
-                        <el-table-column
-                          prop="cowNumber"
-                          label="牛编号"
-                          width="180">
-                        </el-table-column>
-                        <el-table-column
-                          prop="breed"
-                          label="品种">
-                        </el-table-column>
-                        <el-table-column
-                          prop="content"
-                          label="预警信息">
-                        </el-table-column>
-                      </el-table>
-                       </div>
-                   </div>
-                </dv-border-box-12>
-                  
+              <dv-border-box-12 style="padding-top: 38px">
+                <div class="warning_table">
+                  <div style="height: 250px; overflow-y: auto;">
+
+                    <el-table class="el-table" :data="tableData" height="100%"
+                      style="width: 98%;margin-left: 10px;margin-top:-15px; ">
+                      <el-table-column prop="farmer" label="养殖户名称" width="180">
+                      </el-table-column>
+                      <el-table-column prop="cowNumber" label="牛编号" width="180">
+                      </el-table-column>
+                      <el-table-column prop="breed" label="品种">
+                      </el-table-column>
+                      <el-table-column prop="content" label="预警信息">
+                      </el-table-column>
+                    </el-table>
+                  </div>
+                </div>
+              </dv-border-box-12>
+
 
             </el-col>
             <!-- 第三列 -->
@@ -139,22 +106,17 @@
               <!-- 养 殖 户 排 名 -->
               <div class="right_box2">
                 <dv-border-box-12 :border="false">
-                              <dv-decoration-7 style="width: 100%; height: 30px"
-                                >养 殖 户 排 名</dv-decoration-7
-                              >
-                              <dv-scroll-ranking-board
-                                :config="userNum"
-                                style="width: 95%; height: 87%; margin-left: 2%"
-                              />
-                              </dv-border-box-12>
+                  <dv-decoration-7 style="width: 100%; height: 30px">养 殖 户 排 名</dv-decoration-7>
+                  <dv-scroll-ranking-board :config="userNum" style="width: 95%; height: 87%; margin-left: 2%" />
+                </dv-border-box-12>
               </div>
 
-                <!-- 第二个部分 -->
-                <div class="right_box3">
-                  <dv-border-box-12 :reverse="true" class="custom-border-box">
-                    <dv-conical-column-chart :config="cone" class="cone_box" />
-                  </dv-border-box-12>
-                </div>
+              <!-- 第二个部分 -->
+              <div class="right_box3">
+                <dv-border-box-12 :reverse="true" class="custom-border-box">
+                  <dv-conical-column-chart :config="cone" class="cone_box" />
+                </dv-border-box-12>
+              </div>
               <!-- <div class="right_box2">
                 <dv-border-box-12 :reverse="true">
                   <div id="dotter_bar"></div>
@@ -190,7 +152,7 @@
 
 
 import drawMixin from "./drawMixin"; //自适应缩放
-import { listagroIndex,listagroRankingFarmers } from "@/api/agroIndex/agroIndex";//首页品种数量
+import { listagroIndex, listagroRankingFarmers } from "@/api/agroIndex/agroIndex";//首页品种数量
 
 // import { formatTime } from "../utils/index.js"; //日期格式转换
 import * as echarts from 'echarts'
@@ -256,7 +218,7 @@ export default {
       config: {
         data: [],
       },
-     
+
       //左侧饼图文字
       numberData: [
         {
@@ -421,9 +383,8 @@ export default {
     this.cancelLoading();
     //中国地图
     this.china_map();
-    //左侧玫瑰饼图
-    this.Rose_diagram();
-    
+
+
     //中间折线图
     this.line_center_diagram();
     //虚线柱状图
@@ -436,76 +397,66 @@ export default {
   },
   methods: {
 
- getIndexVarList() {
-  this.loading = true;
-  listagroIndex().then(response => {
-    // 获取后端返回的数据
-    const rows = response.rows;
+    getIndexVarList() {
+      this.loading = true;
+      listagroIndex().then(response => {
+        // 获取后端返回的数据
+        const rows = response.rows;
 
-    // 将获取的数据赋值给 IndexVarList
-    // this.IndexVarList = rows;
+        // 将获取的数据赋值给 IndexVarList
+        // this.IndexVarList = rows;
 
-    // 对数据进行格式化并赋值给 config 对象中的 data 属性
-    const formattedData = rows.map(item => {
-      return {
-        value: parseInt(item.varietiesNum), // 将字符串转换为整数
-        name: item.livestockVarieties
-      };
-    });
-    this.$delete(this.config,'data');
-    this.$set(this.config, 'data', formattedData);
-    // this.config.data=formattedData;
-    
-       //左侧柱状图
-    this.columnar();
-    this.loading = false; // 数据加载完成后设置 loading 为 false
-  }).catch(error => {
-    console.error('获取数据出错：', error);
-    this.loading = false; // 数据加载出错时也需要设置 loading 为 false
-  });
-},
+        // 对数据进行格式化并赋值给 config 对象中的 data 属性
+        const formattedData = rows.map(item => {
+          return {
+            value: parseInt(item.varietiesNum), // 将字符串转换为整数
+            name: item.livestockVarieties
+          };
+        });
+        this.$delete(this.config, 'data');
+        this.$set(this.config, 'data', formattedData);
+        // this.config.data=formattedData;
 
-getAgroNumlist() {
-  this.loading = true;
-  listagroRankingFarmers().then(response => {
-    // 获取后端返回的数据
-    const rows = response.rows;
+        //左侧柱状图
+        this.columnar();
+        //左侧玫瑰饼图
+        this.Rose_diagram();
+        this.loading = false; // 数据加载完成后设置 loading 为 false
+      }).catch(error => {
+        console.error('获取数据出错：', error);
+        this.loading = false; // 数据加载出错时也需要设置 loading 为 false
+      });
+    },
 
-    // 将获取的数据赋值给 IndexVarList
-    // this.agroNumlist = rows;
+    getAgroNumlist() {
+      this.loading = true;
+      listagroRankingFarmers().then(response => {
+        // 获取后端返回的数据
+        const rows = response.rows;
 
-    // 对数据进行格式化并赋值给 config 对象中的 data 属性
-    const formattedData = rows.map(item => {
-      return {
-        value: parseInt(item.num), // 将字符串转换为整数
-        name: item.agroUserName
-      };
-    });
-    this.$delete(this.userNum,'data');
-    this.$set(this.userNum, 'data', formattedData);
-    // this.config.data=formattedData;
-    
-         
-    this.loading = false; // 数据加载完成后设置 loading 为 false
-  }).catch(error => {
-    console.error('获取数据出错：', error);
-    this.loading = false; // 数据加载出错时也需要设置 loading 为 false
-  });
-},
+        // 将获取的数据赋值给 IndexVarList
+        // this.agroNumlist = rows;
+
+        // 对数据进行格式化并赋值给 config 对象中的 data 属性
+        const formattedData = rows.map(item => {
+          return {
+            value: parseInt(item.num), // 将字符串转换为整数
+            name: item.agroUserName
+          };
+        });
+        this.$delete(this.userNum, 'data');
+        this.$set(this.userNum, 'data', formattedData);
+        // this.config.data=formattedData;
 
 
+        this.loading = false; // 数据加载完成后设置 loading 为 false
+      }).catch(error => {
+        console.error('获取数据出错：', error);
+        this.loading = false; // 数据加载出错时也需要设置 loading 为 false
+      });
+    },
 
-    //右上角当前日期时间显示：每一秒更新一次最新时间
-    // timeFn() {
-    //   this.timing = setInterval(() => {
-    //     //获取当前时分秒
-    //     this.dateDay = formatTime(new Date(), "HH: mm: ss");
-    //     //获取当前年月日
-    //     this.dateYear = formatTime(new Date(), "yyyy-MM-dd");
-    //     //获取当前周几
-    //     this.dateWeek = this.weekday[new Date().getDay()];
-    //   }, 1000);
-    // },
+
     //loading图
     cancelLoading() {
       setTimeout(() => {
@@ -874,63 +825,55 @@ getAgroNumlist() {
     },
     //玫瑰饼图
     Rose_diagram() {
-  let mapChart = this.$echarts.init(
-    document.getElementById("Rose_diagram")
-  ); //图表初始化，china-map是绑定的元素
-  window.onresize = mapChart.resize; //如果容器变大小，自适应从新构图
-  let option = {
-    color: [
-      "#37a2da",
-      "#32c5e9",
-      "#9fe6b8",
-      "#ffdb5c",
-      "#ff9f7f",
-      "#fb7293",
-      "#e7bcf3",
-      "#8378ea",
-    ],
-    tooltip: {
-      trigger: "item",
-      formatter: "{a} <br/>{b} : {c} ({d}%)",
-    },
-    toolbox: {
-      show: true,
-    },
-    calculable: true,
-    series: [
-      {
-        name: "通过率统计",
-        type: "pie",
-        radius: [10, 50],
-        roseType: "area",
-        center: ["50%", "40%"],
-        data: [
-          { value: 10, name: "data1" },
-          { value: 5, name: "data2" },
-          { value: 15, name: "data3" },
-          { value: 25, name: "data4" },
-          { value: 20, name: "data5" },
-          { value: 35, name: "data6" },
+      let mapChart = this.$echarts.init(
+        document.getElementById("Rose_diagram")
+      ); //图表初始化，china-map是绑定的元素
+      window.onresize = mapChart.resize; //如果容器变大小，自适应从新构图
+      // 提取config1中的数据
+      let roseData = this.config.data;
+
+
+      let option = {
+        color: [
+          "#37a2da",
+          "#32c5e9",
+          "#9fe6b8",
+          "#ffdb5c",
+          "#ff9f7f",
+          "#fb7293",
+          "#e7bcf3",
+          "#8378ea",
         ],
-      },
-    ],
-  };
-  mapChart.setOption(option); //生成图表
-},
+        tooltip: {
+          trigger: "item",
+          formatter: "{a} <br/>{b} : {c} ({d}%)",
+        },
+        toolbox: {
+          show: true,
+        },
+        calculable: true,
+        series: [
+          {
+            name: "通过率统计",
+            type: "pie",
+            radius: [10, 50],
+            roseType: "area",
+            center: ["50%", "40%"],
+            data: roseData,
+          },
+        ],
+      };
+      mapChart.setOption(option); //生成图表
+    },
 
     //柱状图
     columnar() {
       let mapChart = this.$echarts.init(document.getElementById("columnar")); //图表初始化，china-map是绑定的元素
       window.onresize = mapChart.resize; //如果容器变大小，自适应从新构图
 
-          // 提取config1中的数据
-    let xAxisData = this.config.data.map(item => item.name);
-    let seriesData = this.config.data.map(item => item.value);
-
-    console.log(xAxisData);
-
-
-
+      // 提取config1中的数据
+      let xAxisData = this.config.data.map(item => item.name);
+      let seriesData = this.config.data.map(item => item.value);
       let option = {
         title: {
           text: "",
@@ -1114,16 +1057,22 @@ a {
   color: #343440;
   text-decoration: none;
 }
+
 //--------------------------------------------
 
 //页面样式部分！！！！
 .container {
   color: #d3d6dd;
-  max-width: 1700px; /* 最大宽度限制为1700px */
-  width: 100%; /* 初始宽度为100% */
-  height: auto; /* 高度自适应 */
-  margin: 0 auto; /* 水平居中 */
-  overflow: visible; /* 尝试修改 overflow 属性为 visible */
+  max-width: 1700px;
+  /* 最大宽度限制为1700px */
+  width: 100%;
+  /* 初始宽度为100% */
+  height: auto;
+  /* 高度自适应 */
+  margin: 0 auto;
+  /* 水平居中 */
+  overflow: visible;
+  /* 尝试修改 overflow 属性为 visible */
 }
 
 // .container {
@@ -1153,6 +1102,7 @@ a {
   transform: translate(-50%, -50%);
   transform-origin: left top;
   overflow: hidden;
+
   .bg {
     //整体页面背景
     width: 100%;
@@ -1162,22 +1112,26 @@ a {
     background-size: cover; //背景尺寸
     background-position: center center; //背景位置
   }
+
   //顶部右边装饰效果
   .title_left {
     width: 100%;
     height: 50px;
   }
+
   //顶部左边装饰效果
   .title_right {
     width: 100%;
     height: 50px;
     margin-top: 18px;
   }
+
   //顶部中间装饰效果
   .title_center {
     width: 100%;
     height: 5px;
   }
+
   //顶部中间陶源生物资产监管系统
   .title_text {
     text-align: center;
@@ -1186,20 +1140,24 @@ a {
     margin-top: 30px;
     color: #008cff;
   }
+
   //时间日期
   .title_time {
     text-align: center;
   }
+
   //中国地图
   #china-map {
     height: 610px;
     width: 100%;
   }
+
   //中间折线图
   .line_center {
     width: 100%;
     height: 300px;
   }
+
   //左1模块
   .left_box1 {
     height: 300px;
@@ -1208,6 +1166,7 @@ a {
     margin-bottom: 10px;
     position: relative;
   }
+
   //左2模块
   .left_box2 {
     height: 280px;
@@ -1215,12 +1174,14 @@ a {
     margin-left: 2%;
     margin-bottom: 10px;
   }
+
   //左3模块
   .left_box3 {
     height: 300px;
     width: 96%;
     margin-left: 2%;
   }
+
   //右1模块
   .right_box1 {
     height: 300px;
@@ -1228,6 +1189,7 @@ a {
     margin-left: 2%;
     margin-bottom: 10px;
   }
+
   //右2模块
   .right_box2 {
     height: 280px;
@@ -1235,45 +1197,54 @@ a {
     margin-left: 2%;
     margin-bottom: 10px;
   }
+
   //右3模块
   .right_box3 {
     height: 300px;
     width: 94%;
     margin-left: 2%;
   }
+
   //左1模块-玫瑰饼图
   #Rose_diagram {
     height: 80%;
     width: 55%;
+    top: 60px;
   }
+
   //左1模块-圆环图
   .left_box1_rose_right {
     height: 85%;
     width: 55%;
     position: absolute;
     right: 0;
-    top: 50px;
+    top: 25px;
   }
+
   //左1模块-文字部分
   .rose_text {
     display: inline-block;
     margin-top: 4%;
     margin-left: 4%;
   }
+
   // 左1模块-￥符号样式
   .coin {
     font-size: 20px;
     color: #ffc107;
   }
+
   //左1模块-（件）样式
   .colorYellow {
     color: yellowgreen;
   }
+
   //左1模块-数字样式
   .rose_text_nmb {
     font-size: 20px;
     color: #00b891;
   }
+
   //左2模块 柱状图
   #columnar {
     height: 97%;
@@ -1281,22 +1252,26 @@ a {
     margin-left: 3%;
     margin-top: 10px;
   }
+
   //折线图
   #line_center_diagram {
     height: 100%;
     width: 100%;
   }
+
   //轮播表格
   .carousel_list {
     width: 96%;
     height: 98%;
     margin-left: 10px;
   }
+
   //虚线柱状图
   #dotter_bar {
     width: 100%;
     height: 100%;
   }
+
   //锥形图
   .cone_box {
     width: 95%;
@@ -1306,19 +1281,21 @@ a {
 }
 
 //预警信息背景透明
-.el-table, .el-table__expanded-cell, tr, .el-table__cell {
+.el-table,
+.el-table__expanded-cell,
+tr,
+.el-table__cell {
   background-color: transparent !important;
 }
 
 /* 在你的样式表中添加自定义样式 */
 .custom-border-box {
-  border: none; /* 移除边框 */
-  padding: 10px; /* 可选：控制内容与边框的间距 */
-  display: inline-block; /* 或者使用 display: inline-flex; */
+  border: none;
+  /* 移除边框 */
+  padding: 10px;
+  /* 可选：控制内容与边框的间距 */
+  display: inline-block;
+  /* 或者使用 display: inline-flex; */
   /* 其他样式 */
 }
-
-
-
 </style>
-

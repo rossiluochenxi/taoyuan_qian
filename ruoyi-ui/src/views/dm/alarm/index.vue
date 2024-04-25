@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="报警信息" prop="info">
+      <!-- <el-form-item label="报警信息" prop="info">
         <el-input
           v-model="queryParams.info"
           placeholder="请输入报警信息"
@@ -16,7 +16,7 @@
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="养殖户" prop="agroUserName">
         <el-input
           v-model="queryParams.agroUserName"
@@ -25,7 +25,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="牲畜档案id" prop="agroLivestockId">
+      <!-- <el-form-item label="牲畜档案id" prop="agroLivestockId">
         <el-input
           v-model="queryParams.agroLivestockId"
           placeholder="请输入牲畜档案id"
@@ -40,7 +40,7 @@
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="设备编号" prop="agroLivestockIccid">
         <el-input
           v-model="queryParams.agroLivestockIccid"
@@ -57,7 +57,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="imei" prop="imei">
+      <!-- <el-form-item label="imei" prop="imei">
         <el-input
           v-model="queryParams.imei"
           placeholder="请输入imei"
@@ -192,14 +192,14 @@
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
+    <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
           type="primary"
@@ -243,40 +243,40 @@
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row>
+    </el-row> -->
 
     <el-table v-loading="loading" :data="alarmList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="id" align="center" prop="id" />
+      <!-- <el-table-column label="id" align="center" prop="id" />
       <el-table-column label="报警信息" align="center" prop="info" />
-      <el-table-column label="养殖户id" align="center" prop="agroUserId" />
+      <el-table-column label="养殖户id" align="center" prop="agroUserId" /> -->
       <el-table-column label="养殖户" align="center" prop="agroUserName" />
-      <el-table-column label="牲畜档案id" align="center" prop="agroLivestockId" />
+      <!-- <el-table-column label="牲畜档案id" align="center" prop="agroLivestockId" /> -->
       <el-table-column label="耳标" align="center" prop="agroLivestockCode" />
       <el-table-column label="设备编号" align="center" prop="agroLivestockIccid" />
       <el-table-column label="项圈编号" align="center" prop="agroLivestockXqiccid" />
       <el-table-column label="设备类型" align="center" prop="deviceType" />
-      <el-table-column label="imei" align="center" prop="imei" />
-      <el-table-column label="平台设备号" align="center" prop="deviceId" />
+      <!-- <el-table-column label="imei" align="center" prop="imei" /> -->
+      <!-- <el-table-column label="平台设备号" align="center" prop="deviceId" /> -->
       <el-table-column label="温度" align="center" prop="temperature" />
       <el-table-column label="步数" align="center" prop="step" />
       <el-table-column label="电量" align="center" prop="drycell" />
       <el-table-column label="体重" align="center" prop="weight" />
-      <el-table-column label="牲畜所在经度" align="center" prop="livestockLon" />
+      <!-- <el-table-column label="牲畜所在经度" align="center" prop="livestockLon" />
       <el-table-column label="牲畜所在纬度" align="center" prop="livestockLat" />
       <el-table-column label="rsrq" align="center" prop="rsrq" />
       <el-table-column label="ecl" align="center" prop="ecl" />
       <el-table-column label="cellid" align="center" prop="cellid" />
       <el-table-column label="snr" align="center" prop="snr" />
       <el-table-column label="rsrp" align="center" prop="rsrp" />
-      <el-table-column label="pci" align="center" prop="pci" />
-      <el-table-column label="上传时间" align="center" prop="date" width="180">
+      <el-table-column label="pci" align="center" prop="pci" /> -->
+      <el-table-column label="报警时间" align="center" prop="date" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.date, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="部门id" align="center" prop="deptId" />
-      <el-table-column label="用户id" align="center" prop="userId" />
+      <!-- <el-table-column label="部门id" align="center" prop="deptId" />
+      <el-table-column label="用户id" align="center" prop="userId" /> -->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -308,18 +308,18 @@
     <!-- 添加或修改报警数据对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="报警信息" prop="info">
+        <!-- <el-form-item label="报警信息" prop="info">
           <el-input v-model="form.info" placeholder="请输入报警信息" />
         </el-form-item>
         <el-form-item label="养殖户id" prop="agroUserId">
           <el-input v-model="form.agroUserId" placeholder="请输入养殖户id" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="养殖户" prop="agroUserName">
           <el-input v-model="form.agroUserName" placeholder="请输入养殖户" />
         </el-form-item>
-        <el-form-item label="牲畜档案id" prop="agroLivestockId">
+        <!-- <el-form-item label="牲畜档案id" prop="agroLivestockId">
           <el-input v-model="form.agroLivestockId" placeholder="请输入牲畜档案id" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="耳标" prop="agroLivestockCode">
           <el-input v-model="form.agroLivestockCode" placeholder="请输入耳标" />
         </el-form-item>
@@ -329,12 +329,12 @@
         <el-form-item label="项圈编号" prop="agroLivestockXqiccid">
           <el-input v-model="form.agroLivestockXqiccid" placeholder="请输入项圈编号" />
         </el-form-item>
-        <el-form-item label="imei" prop="imei">
+        <!-- <el-form-item label="imei" prop="imei">
           <el-input v-model="form.imei" placeholder="请输入imei" />
         </el-form-item>
         <el-form-item label="平台设备号" prop="deviceId">
           <el-input v-model="form.deviceId" placeholder="请输入平台设备号" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="温度" prop="temperature">
           <el-input v-model="form.temperature" placeholder="请输入温度" />
         </el-form-item>
@@ -350,7 +350,7 @@
         <el-form-item label="牲畜所在经度" prop="livestockLon">
           <el-input v-model="form.livestockLon" placeholder="请输入牲畜所在经度" />
         </el-form-item>
-        <el-form-item label="牲畜所在纬度" prop="livestockLat">
+        <!-- <el-form-item label="牲畜所在纬度" prop="livestockLat">
           <el-input v-model="form.livestockLat" placeholder="请输入牲畜所在纬度" />
         </el-form-item>
         <el-form-item label="rsrq" prop="rsrq">
@@ -370,7 +370,7 @@
         </el-form-item>
         <el-form-item label="pci" prop="pci">
           <el-input v-model="form.pci" placeholder="请输入pci" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="上传时间" prop="date">
           <el-date-picker clearable
             v-model="form.date"
@@ -379,12 +379,12 @@
             placeholder="请选择上传时间">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="部门id" prop="deptId">
+        <!-- <el-form-item label="部门id" prop="deptId">
           <el-input v-model="form.deptId" placeholder="请输入部门id" />
         </el-form-item>
         <el-form-item label="用户id" prop="userId">
           <el-input v-model="form.userId" placeholder="请输入用户id" />
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
