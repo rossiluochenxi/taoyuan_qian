@@ -67,7 +67,7 @@
                   <div style="height: 250px; overflow-y: auto;">
 
                     <el-table class="el-table" :data="tableData" height="100%"
-                      style="width: 98%;margin-left: 10px;margin-top:-15px; ">
+                      style="width: 98%;margin-left: 10px;margin-top:-15px; color:cyan;">
                       <el-table-column prop="agroUserName" label="养殖户" width="180">
                       </el-table-column>
                       <el-table-column prop="agroLivestockIccid" label="设备编号" width="180">
