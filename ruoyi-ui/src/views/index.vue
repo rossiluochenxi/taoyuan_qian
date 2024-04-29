@@ -12,7 +12,7 @@
               <dv-decoration-5 class="title_center" :color="['#008CFF', '#00ADDD']" />
             </el-col>
             <el-col :span="6">
-              <div class="title_time">{{ dateYear + dateWeek + dateDay }}</div>
+              <!-- <div class="title_time">{{ dateYear + dateWeek + dateDay }}</div> -->
               <dv-decoration-8 :reverse="true" class="title_left" :color="['#008CFF', '#00ADDD']" />
             </el-col>
           </el-row>
@@ -56,7 +56,7 @@
             <!-- 第二列 -->
             <el-col :span="12">
               <!-- 中国地图 -->
-              <div id="china-map"></div>
+              <div id="china-map" ref="china-map"></div>
               <!-- 折线图 -预警表-->
               <dv-border-box-8>
                 <div id="line_center_diagram"></div>
@@ -157,11 +157,16 @@ import drawMixin from "./drawMixin"; //自适应缩放
 import { listagroIndex, listagroRankingFarmers,dmAlarmDataIndexList} from "@/api/agroIndex/agroIndex";//首页品种数量
 
 // import { formatTime } from "../utils/index.js"; //日期格式转换
+
 import * as echarts from 'echarts'
+ import chinamap from './china.json';
+// import chinamap from '@/views/china.json'
+
 export default {
   mixins: [drawMixin],
   data() {
     return {
+      myChart: null,
       //首页用户排名
       agroNumlist: [],
       //首页品种集合
@@ -355,8 +360,13 @@ export default {
     //加载loading图
     this.cancelLoading();
     //中国地图
-    this.china_map();
+     // 使用 setTimeout 添加延迟确保 DOM 元素已经加载完毕
+    // setTimeout(() => {
+      this.china_map();
+    // }, 9000); // 延迟 1000 毫秒，你可以根据实际情况调整
+  // 1. 创建一个 ECharts 实例，返回 echartsInstance，不能在单个容器上初始化多个 ECharts 实例
 
+    // this.init();
 
     //中间折线图
     this.line_center_diagram();
@@ -452,332 +462,22 @@ export default {
         this.loading = false;
       }, 500);
     },
-    //中国地图
+    /*
+      显示中国地图
+    */
     china_map() {
-      let mapChart = this.$echarts.init(document.getElementById("china-map")); //图表初始化，china-map是绑定的元素
-      window.onresize = mapChart.resize; //如果容器变大小，自适应从新构图
-      let series = []; //存放循环配置项
-      let res = []; //存放射线的起始点和结束点位置
-      let province = []; //存放有射线的省的名字，以此来拿到对应省份的坐标
-      //提前存好的所有省份坐标，用于后面根据名字拿到对应的左边
-      let chinaGeoCoordMap = {
-        新疆: [86.9023, 41.148],
-        西藏: [87.8695, 31.6846],
-        内蒙古: [110.5977, 41.3408],
-        青海: [95.2402, 35.4199],
-        四川: [102.9199, 30.1904],
-        黑龙江: [128.1445, 46.7156],
-        甘肃: [102.7129, 38.166],
-        云南: [101.0652, 24.6807],
-        广西: [108.7813, 23.6426],
-        湖南: [111.5332, 27.3779],
-        陕西: [108.5996, 33.7396],
-        广东: [113.8668, 22.8076],
-        吉林: [126.1746, 43.5938],
-        河北: [115.4004, 38.1688],
-        湖北: [112.2363, 30.8572],
-        贵州: [106.6113, 26.6385],
-        山东: [118.2402, 36.2307],
-        江西: [115.7156, 27.99],
-        河南: [113.0668, 33.8818],
-        辽宁: [123.0438, 41.0889],
-        山西: [112.4121, 36.6611],
-        安徽: [117.2461, 31.0361],
-        福建: [118.3008, 25.9277],
-        浙江: [120.498, 29.0918],
-        江苏: [119.8586, 32.915],
-        重庆: [107.7539, 29.8904],
-        宁夏: [105.9961, 37.1096],
-        海南: [109.9512, 19.2041],
-        台湾: [120.8254, 23.5986],
-        北京: [116.4551, 40.2539],
-        天津: [117.4219, 39.4189],
-        上海: [121.4648, 31.2891],
-        香港: [114.6178, 22.3242],
-        澳门: [113.5547, 21.6484],
-      };
-      //后台给的数据模拟
-      let lineData = [
-        {
-          val: 32, //数据
-          blat: [86.9023, 41.148], //发射点
-          elon: [87.8695, 31.6846], //接收点
-          bcitysim: "新疆", //发射省的名字
-          ecitysim: "西藏", //接收省的名字
-        },
-        {
-          val: 31,
-          blat: [87.8695, 31.6846],
-          elon: [95.2402, 35.4199],
-          bcitysim: "西藏",
-          ecitysim: "青海",
-        },
-        {
-          val: 33,
-          blat: [86.9023, 41.148],
-          elon: [95.2402, 35.4199],
-          bcitysim: "新疆",
-          ecitysim: "青海",
-        },
-        {
-          val: 33,
-          blat: [116.4551, 40.2539],
-          elon: [119.8586, 32.915],
-          bcitysim: "北京",
-          ecitysim: "江苏",
-        },
-        {
-          val: 33,
-          blat: [120.8254, 23.5986],
-          elon: [109.9512, 19.2041],
-          bcitysim: "台湾",
-          ecitysim: "海南",
-        },
-        {
-          val: 33,
-          blat: [120.498, 29.0918],
-          elon: [115.7156, 27.99],
-          bcitysim: "浙江",
-          ecitysim: "江西",
-        },
-        {
-          val: 33,
-          blat: [117.2461, 31.0361],
-          elon: [119.8586, 32.915],
-          bcitysim: "安徽",
-          ecitysim: "江苏",
-        },
-        {
-          val: 33,
-          blat: [117.2461, 31.0361],
-          elon: [105.9961, 37.1096],
-          bcitysim: "安徽",
-          ecitysim: "宁夏",
-        },
-        {
-          val: 33,
-          blat: [117.2461, 31.0361],
-          elon: [107.7539, 29.8904],
-          bcitysim: "安徽",
-          ecitysim: "重庆",
-        },
-        {
-          val: 33,
-          blat: [117.2461, 31.0361],
-          elon: [123.0438, 41.0889],
-          bcitysim: "安徽",
-          ecitysim: "辽宁",
-        },
-        {
-          val: 33,
-          blat: [119.8586, 32.915],
-          elon: [102.7129, 38.166],
-          bcitysim: "江苏",
-          ecitysim: "甘肃",
-        },
-        {
-          val: 33,
-          blat: [119.8586, 32.915],
-          elon: [128.1445, 46.7156],
-          bcitysim: "江苏",
-          ecitysim: "黑龙江",
-        },
-        {
-          val: 33,
-          blat: [119.8586, 32.915],
-          elon: [110.5977, 41.3408],
-          bcitysim: "江苏",
-          ecitysim: "内蒙古",
-        },
-        {
-          val: 33,
-          blat: [119.8586, 32.915],
-          elon: [101.0652, 24.6807],
-          bcitysim: "江苏",
-          ecitysim: "云南",
-        },
-        {
-          val: 33,
-          blat: [119.8586, 32.915],
-          elon: [86.9023, 41.148],
-          bcitysim: "江苏",
-          ecitysim: "新疆",
-        },
-        {
-          val: 33,
-          blat: [86.9023, 41.148],
-          elon: [110.5977, 41.3408],
-          bcitysim: "新疆",
-          ecitysim: "内蒙古",
-        },
-        {
-          val: 33,
-          blat: [86.9023, 41.148],
-          elon: [102.9199, 30.1904],
-          bcitysim: "新疆",
-          ecitysim: "四川",
-        },
-      ];
-      //循环拿到处理好的数据
-      for (var i = 0; i < lineData.length; i++) {
-        province.push(lineData[i].bcitysim); //存进去每个省的名字
-        province.push(lineData[i].ecitysim); //存进去每个省的名字
-        res.push({
-          fromName: lineData[i].bcitysim, //发射的省名，保存用于弹框显示
-          toName: lineData[i].ecitysim, //接收的省名，保存用于弹框显示
-          coords: [
-            lineData[i].blat, //发射
-            lineData[i].elon, //接收
-          ],
-          count: lineData[i].val, //数据
-        });
-      }
-      let index_data = new Set(province); //把省的名字去重
-      let data_res = []; //定义一个新的变量存放省的坐标
 
-      //注意这里一定要用name和value的形式。不是这个格式的散点图显示不出来
-      index_data.forEach((item) => {
-        data_res.push({
-          name: item, //每个省的名字
-          value: chinaGeoCoordMap[item], //每个省的坐标
-        });
-      });
-      //循环往series内添加配置项
-      series.push(
-        {
-          //射线效果图层
-          type: "lines", //类型：射线
-          zlevel: 1, //类似图层效果
-          effect: {
-            show: true, //是否显示图标
-            symbol: "arrow", //箭头图标
-            symbolSize: 5, //图标大小
-            trailLength: 0.02, //特效尾迹长度[0,1]值越大，尾迹越长重
-          },
-          label: {
-            show: true,
-          },
-          lineStyle: {
-            color: "#fff",
-            normal: {
-              color: "#00A0FF",
-              width: 1, //尾迹线条宽度
-              opacity: 0.5, //尾迹线条透明度
-              curveness: 0.1, //尾迹线条曲直度
-            },
-          },
-          //提示框信息
-          tooltip: {
-            formatter: function (param) {
-              return (
-                param.data.fromName +
-                ">" +
-                param.data.toName +
-                "<br>数量：" +
-                param.data.count
-              );
-            },
-          },
-          data: res, //拿到射线的起始点和结束点
-        },
-        //散点图
-        // {
-        //   type: "effectScatter",//散点图
-        //   coordinateSystem: "geo",//这个不能删，删了不显示
-        //   zlevel: 1,
-        //   rippleEffect: {
-        //     //涟漪特效
-        //     period: 4, //动画时间，值越小速度越快
-        //     brushType: "stroke", //波纹绘制方式 stroke, fill
-        //     scale: 4, //波纹圆环最大限制，值越大波纹越大
-        //   },
-        //   //设置文字部分
-        //   label: {
-        //     normal: {
-        //       show: true, //省份名显示隐藏
-        //       position: "right", //省份名显示位置
-        //       offset: [5, 0], //省份名偏移设置
-        //       formatter: function (params) {
-        //         //圆环显示省份名
-        //         return params.name;  //这个名字是根据data中的name来显示的
-        //       },
-        //       fontSize: 12,//文字大小
-        //     },
-        //     emphasis: {
-        //       show: true,
-        //     },
-        //   },
-        //   symbol: "circle",//散点图
-        //   symbolSize: 5,//散点大小
-        //   itemStyle: {//散点样式
-        //     normal: {
-        //       show: true,
-        //       color: "#fff",
-        //     },
-        //   },
-        //   data: data_res, //处理好后的散点图坐标数组
-        // },
-        //点击高亮
-        {
-          type: "map",
-          mapType: "china",
-          zlevel: 1,
-          roam: true,
-          geoIndex: 0,
-          tooltip: {
-            show: true,
-          },
-          itemStyle: {
-            areaColor: "#00196d",
-            borderColor: "#0a53e9",
-          },
-          emphasis: {
-            show: true,
-            label: {
-              normal: {
-                show: true, // 是否显示对应地名
-                textStyle: {
-                  color: "#fff",
-                },
-              },
-            },
-            itemStyle: {
-              areaColor: "#00196d",
-              borderColor: "#0a53e9",
-            },
-          },
-        }
-      );
-      //配置
-      let option = {
-        //title可要可不要
+   this.myChart = this.$echarts.init(document.getElementById("china-map")); 
+      window.onresize = this.myChart.resize; //如果容器变大小，自适应从新构图
 
-        // title: {
-        //   text: "查查的地图",
-        //   textStyle: {
-        //     color: "#ffffff",
-        //   },
-        // },
-        legend: {
-          show: true,
-          selected: {},
-          x: "left",
-          orient: "vertical",
-          textStyle: {
-            color: "white",
-          },
-          data: [],
-        },
-        //鼠标移上去的弹框
-        tooltip: {
-          trigger: "item",
-          show: true,
-        },
-        //geo：这是重点
-        geo: {
+      // 2. 注册可用的地图，只在 geo 组件或者map图表类型中使用
+      this.$echarts.registerMap("china", chinamap); //用导入的json文件注册一个name:china的地图组件
+           // 3. 设置图表 option
+      var option = {
+ geo: {
           map: "china", //中国地图
           zoom: 1.2, //缩放倍数
-          roam: false, //是否允许缩放和拖拽地图
+          roam: true, //是否允许缩放和拖拽地图
           label: {
             normal: {
               show: true, // 是否显示省份名字，现在是隐藏的状态，因为和散点图的名字重叠了。如果需要就true
@@ -808,10 +508,50 @@ export default {
             },
           },
         },
-        series: series, //图表配置
+ 
+  
+   
+        series: [
+          {
+             smooth: true,
+            symbol: "emptyCircle",
+            symbolSize: 8,
+            name: "在地图中显示散点图",
+            type: "scatter",
+            coordinateSystem: "geo", //设置坐标系为 geo
+            data: [
+              //这里放标注点的坐标[{name: "北京",value: [116.46, 39.92]}]
+              { name: "北京", value: [116.41995, 40.18994] },
+              { name: "郑州", value: [113.665412, 34.757975] },
+              { name: "天津", value: [117.205126, 39.034933] },
+              { name: "昆明", value: [102.81844, 24.906231] },
+              { name: "广州", value: [113.26453, 23.155008] },
+            ],
+               itemStyle: {
+              normal: {
+                color: "#fff",
+              },
+            },
+            //线的颜色样式
+            lineStyle: {
+              normal: {
+                color: this.colorList.linearBtoG,
+                width: 3,
+              },
+            },
+            //填充颜色样式
+            areaStyle: {
+              normal: {
+                color: this.colorList.areaBtoG,
+              },
+            },
+          },
+        ],
       };
-      mapChart.setOption(option); //生成图表
-    },
+      // 4. myChart.setOption
+      this.myChart.setOption(option);
+    }, 
+  
     //玫瑰饼图
     Rose_diagram() {
       let mapChart = this.$echarts.init(
