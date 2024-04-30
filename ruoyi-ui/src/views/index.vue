@@ -46,11 +46,16 @@
                   <div id="columnar"></div>
                 </dv-border-box-12>
               </div>
-              <!-- 轮播表格部分 -->
+              <!-- 轮播表格部分 :config="board_info" -->
               <div class="left_box3">
                 <dv-border-box-12 style="padding-top: 10px">
-                  <dv-scroll-board :config="board_info" class="carousel_list" oddRowBGC="#fff" />
+                  <!-- 饼形图容器 -->
+               <div ref="pieChart" style="width: 350px; height: 300px; margin-left: 50px; margin-top: 15px"></div>
                 </dv-border-box-12>
+               
+    <!-- 饼形图容器 -->
+    <!-- <div ref="pieChart" style="width: 200px; height: 50px;"></div> -->
+  
               </div>
             </el-col>
             <!-- 第二列 -->
@@ -116,8 +121,10 @@
               <!-- 第二个部分 -->
               <div class="right_box3">
                 <dv-border-box-12 :reverse="true" class="custom-border-box">
-                  <dv-conical-column-chart :config="cone" class="cone_box" />
+                  <!-- <dv-conical-column-chart :config="cone" class="cone_box" /> -->
+                  <div ref="collarChart"style="width: 380px; height: 300px; margin-left: 30px; margin-top: 20px"></div>
                 </dv-border-box-12>
+              
               </div>
               <!-- <div class="right_box2">
                 <dv-border-box-12 :reverse="true">
@@ -158,14 +165,32 @@ import { listagroIndex, listagroRankingFarmers,dmAlarmDataIndexList} from "@/api
 
 // import { formatTime } from "../utils/index.js"; //日期格式转换
 
-import * as echarts from 'echarts'
+// 引入 ECharts
+import * as echarts from 'echarts/core';
+import { PieChart } from 'echarts/charts';
+import { TooltipComponent } from 'echarts/components';
+import { CanvasRenderer } from 'echarts/renderers';
+// 使用必要的组件
+echarts.use([PieChart, TooltipComponent, CanvasRenderer]);
  import chinamap from './china.json';
 // import chinamap from '@/views/china.json'
 
 export default {
   mixins: [drawMixin],
+  name: 'PieChartExample',
+  name: 'CollarChartExample',
   data() {
     return {
+      //左侧饼形图耳标在线数量
+      chartData: [
+        { value: 30, name: '离线耳标',itemStyle: { color: '#CD5C5C' } },
+        { value: 300, name: '在线耳标',itemStyle: { color: '#90EE90' } }
+      ],
+      //右侧饼形图项圈在线数量
+      collarchartData: [
+        { value: 120, name: '已在线',itemStyle: { color: '#CD5C5C' } },
+        { value: 80, name: '未在线',itemStyle: { color: '#90EE90' } }
+      ],
       myChart: null,
       //首页用户排名
       agroNumlist: [],
@@ -218,24 +243,24 @@ export default {
         // },
       ],
       //左侧轮播表格配置项
-      board_info: {
-        header: ["养殖户名称", "监控设备编号", "设备状态"],
-        data: [
-          ["张三", "10830", "在线"],
-          ["张四", "13500", "在线"],
-          ["张五", "10350", "在线"],
-          ["张六", "13300", "在线"],
-          ["张七", "12500", "在线"],
-          ["张八", "11500", "在线"],
-          ["张九", "12500", "在线"],
-          ["王六", "10360", "在线"],
-          ["王二", "10567", "在线"],
-          ["李四", "15721", "在线"],
-        ],
-        evenRowBGC: "#020308",
-        oddRowBGC: "#382B47",
-        headerBGC: "#020308",
-      },
+      // board_info: {
+      //   header: ["养殖户名称", "监控设备编号", "设备状态"],
+      //   data: [
+      //     ["张三", "10830", "在线"],
+      //     ["张四", "13500", "在线"],
+      //     ["张五", "10350", "在线"],
+      //     ["张六", "13300", "在线"],
+      //     ["张七", "12500", "在线"],
+      //     ["张八", "11500", "在线"],
+      //     ["张九", "12500", "在线"],
+      //     ["王六", "10360", "在线"],
+      //     ["王二", "10567", "在线"],
+      //     ["李四", "15721", "在线"],
+      //   ],
+      //   evenRowBGC: "#020308",
+      //   oddRowBGC: "#382B47",
+      //   headerBGC: "#020308",
+      // },
       // 定义颜色
       colorList: {
         linearYtoG: {
@@ -309,41 +334,41 @@ export default {
       },
 
       //锥形柱状图
-      cone: {
-        data: [
+      // cone: {
+      //   data: [
 
-          {
-            name: "鸡",
-            value: 66,
-          },
+      //     {
+      //       name: "鸡",
+      //       value: 66,
+      //     },
 
-          {
-            name: "鸭",
-            value: 80,
-          },
+      //     {
+      //       name: "鸭",
+      //       value: 80,
+      //     },
 
-          {
-            name: "牛",
-            value: 45,
-          },
+      //     {
+      //       name: "牛",
+      //       value: 45,
+      //     },
 
-          {
-            name: "鹅",
-            value: 29,
-          },
+      //     {
+      //       name: "鹅",
+      //       value: 29,
+      //     },
 
-          {
-            name: "兔",
-            value: 55,
-          },
-          {
-            name: "羊",
-            value: 120,
-          },
+      //     {
+      //       name: "兔",
+      //       value: 55,
+      //     },
+      //     {
+      //       name: "羊",
+      //       value: 120,
+      //     },
 
-        ],
-        showValue: true,
-      },
+      //   ],
+      //   showValue: true,
+      // },
     };
   },
   created() {
@@ -353,6 +378,11 @@ export default {
   },
 
   mounted() {
+    // 初始化 ECharts 实例
+    this.initCollarChart();
+    // 初始化 ECharts 实例
+    this.initPieChart();
+  
     // 假设在 mounted 钩子函数中获取后端数据，并赋值给 IndexVarList 数组
     // this.fetchData();
     // //获取实时时间
@@ -379,6 +409,94 @@ export default {
     clearInterval(this.timing);
   },
   methods: {
+    //项圈在线数量
+    initCollarChart() {
+      // 基于准备好的dom，初始化echarts实例
+      const myChart = echarts.init(this.$refs.collarChart);
+
+      // 配置项
+      const option = {
+        title: {
+            text: '项圈在线数',
+            left: 'center',
+            textStyle: {
+              color: 'white' // 设置字体颜色为白色
+            }
+          },
+          textStyle: {
+                      fontFamily: 'Helvetica', // 设置字体为 Helvetica
+                      fontSize: 20, // 设置字体大小为 25 像素
+                     
+                    },
+        tooltip: {
+          trigger: 'item',
+          formatter: '{a} <br/>{b}: {c} ({d}%)'
+        },
+        series: [
+          {
+            name: '在线情况',
+            type: 'pie',
+            radius: '50%',
+            data: this.collarchartData,
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            }
+          }
+        ]
+      };
+
+      // 使用配置项显示图表
+      myChart.setOption(option);
+    },
+
+    //耳标在线数量
+    initPieChart() {
+      // 基于准备好的dom，初始化echarts实例
+      const myChart = echarts.init(this.$refs.pieChart);
+
+      // 耳标在线数量配置项
+      const option = {
+        title: {
+            text: '耳标在线数',
+            left: 'center',
+            textStyle: {
+              color: 'white' // 设置字体颜色为白色
+            }
+          },
+          textStyle: {
+                      fontFamily: 'Helvetica', // 设置字体为 Helvetica
+                      fontSize: 20, // 设置字体大小为 25 像素
+                     
+                    },
+        tooltip: {
+          trigger: 'item',
+          formatter: '{a} <br/>{b}: {c} ({d}%)'
+        },
+        series: [
+          {
+            name: '耳标',
+            type: 'pie',
+            radius: '50%',
+            data: this.chartData,
+            color: ['#CD5C5C','#90EE90'], // 设置颜色数组
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            }
+          }
+        ]
+      };
+
+      // 使用配置项显示图表
+      myChart.setOption(option);
+    },
 
     getIndexVarList() {
       this.loading = true;
@@ -445,11 +563,7 @@ export default {
       dmAlarmDataIndexList().then(response => {
         // 获取后端返回的数据
     this.tableData = response.rows;
-
-
-
-
-        this.loading = false; // 数据加载完成后设置 loading 为 false
+    this.loading = false; // 数据加载完成后设置 loading 为 false
       }).catch(error => {
         console.error('获取数据出错：', error);
         this.loading = false; // 数据加载出错时也需要设置 loading 为 false
@@ -1027,4 +1141,10 @@ tr,
   /* 或者使用 display: inline-flex; */
   /* 其他样式 */
 }
+// .pie-chart-container {
+//     width: 200px;
+//     height: 200px;
+//     margin-right: 200px;
+//     margin-bottom: 200px;
+//   }
 </style>
