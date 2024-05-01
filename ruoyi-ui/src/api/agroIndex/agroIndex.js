@@ -23,3 +23,19 @@ export function dmAlarmDataIndexList() {
     method: 'get',
   })
 }
+
+// 首页耳标在线离线数量
+export function ebOnOffLineDevice() {
+  return request({
+    url: "/agro/index/ebOnOffLineDevice",
+    method: "get",
+  });
+}
+
+// 首页项圈在线离线数量
+export function xqOnOffLineDevice() {
+  return request({
+    url: "/agro/index/xqOnOffLineDevice",
+    method: "get",
+  });
+}
