@@ -122,7 +122,7 @@
               <div class="right_box3">
                 <dv-border-box-12 :reverse="true" class="custom-border-box">
                   <!-- <dv-conical-column-chart :config="cone" class="cone_box" /> -->
-                  <div ref="collarChart"style="width: 380px; height: 300px; margin-left: 30px; margin-top: 20px"></div>
+                  <div ref="collarChart" style="width: 380px; height: 300px; margin-left: 30px; margin-top: 20px"></div>
                 </dv-border-box-12>
               
               </div>
@@ -161,7 +161,7 @@
 
 
 import drawMixin from "./drawMixin"; //自适应缩放
-import { listagroIndex, listagroRankingFarmers,dmAlarmDataIndexList} from "@/api/agroIndex/agroIndex";//首页品种数量
+import { listagroIndex, listagroRankingFarmers,dmAlarmDataIndexList,ebOnOffLineDevice,xqOnOffLineDevice} from "@/api/agroIndex/agroIndex";//首页品种数量
 
 // import { formatTime } from "../utils/index.js"; //日期格式转换
 
@@ -182,15 +182,9 @@ export default {
   data() {
     return {
       //左侧饼形图耳标在线数量
-      chartData: [
-        { value: 30, name: '离线耳标',itemStyle: { color: '#CD5C5C' } },
-        { value: 300, name: '在线耳标',itemStyle: { color: '#90EE90' } }
-      ],
+      chartData: [],
       //右侧饼形图项圈在线数量
-      collarchartData: [
-        { value: 120, name: '已在线',itemStyle: { color: '#CD5C5C' } },
-        { value: 80, name: '未在线',itemStyle: { color: '#90EE90' } }
-      ],
+      collarchartData: [],
       myChart: null,
       //首页用户排名
       agroNumlist: [],
@@ -375,13 +369,13 @@ export default {
     this.getIndexVarList();
     this.getAgroNumlist();
     this.getDmAlarmDataIndexList();
+    this.getebDeviceState();
+    this.getxqDeviceState();
   },
 
   mounted() {
-    // 初始化 ECharts 实例
-    this.initCollarChart();
-    // 初始化 ECharts 实例
-    this.initPieChart();
+
+
   
     // 假设在 mounted 钩子函数中获取后端数据，并赋值给 IndexVarList 数组
     // this.fetchData();
@@ -390,14 +384,7 @@ export default {
     //加载loading图
     this.cancelLoading();
     //中国地图
-     // 使用 setTimeout 添加延迟确保 DOM 元素已经加载完毕
-    // setTimeout(() => {
-      this.china_map();
-    // }, 9000); // 延迟 1000 毫秒，你可以根据实际情况调整
-  // 1. 创建一个 ECharts 实例，返回 echartsInstance，不能在单个容器上初始化多个 ECharts 实例
-
-    // this.init();
-
+    this.china_map();
     //中间折线图
     this.line_center_diagram();
     //虚线柱状图
@@ -497,7 +484,9 @@ export default {
       // 使用配置项显示图表
       myChart.setOption(option);
     },
-
+   /**
+    * 获取品种信息
+    */
     getIndexVarList() {
       this.loading = true;
       listagroIndex().then(response => {
@@ -528,7 +517,9 @@ export default {
         this.loading = false; // 数据加载出错时也需要设置 loading 为 false
       });
     },
-
+    /**
+     * 获取养殖户排名
+     */
     getAgroNumlist() {
       this.loading = true;
       listagroRankingFarmers().then(response => {
@@ -557,13 +548,64 @@ export default {
       });
     },
 
-    //报警数据
+    /**
+     * 报警数据
+     */
     getDmAlarmDataIndexList() {
       this.loading = true;
       dmAlarmDataIndexList().then(response => {
         // 获取后端返回的数据
     this.tableData = response.rows;
     this.loading = false; // 数据加载完成后设置 loading 为 false
+      }).catch(error => {
+        console.error('获取数据出错：', error);
+        this.loading = false; // 数据加载出错时也需要设置 loading 为 false
+      });
+    },
+       /**
+        * 耳标设备在线离线数量
+        *  
+        */  
+    getebDeviceState() {
+    this.loading = true;
+    ebOnOffLineDevice().then(response => {
+             this.chartData = response.rows.map(row => {
+             return {
+                value: parseInt(row.totalNumber),
+                name: row.deviceStatus === '在线' ? '在线耳标' : '离线耳标',
+                itemStyle: {
+                    color: row.deviceStatus === '在线' ? '#90EE90' : '#CD5C5C'
+                }
+            };
+             });
+               // 初始化 耳标 
+    this.initPieChart();
+        this.loading = false; // 数据加载完成后设置 loading 为 false
+    }).catch(error => {
+        console.error('获取数据出错：', error);
+        this.loading = false; // 数据加载出错时也需要设置 loading 为 false
+    }); 
+},
+
+     /**
+        * 项圈设备在线离线数量
+        *  
+        */  
+    getxqDeviceState() {
+      this.loading = true;
+      xqOnOffLineDevice().then(response => {
+       this.collarchartData = response.rows.map(row => {
+             return {
+                value: parseInt(row.totalNumber),
+                name: row.deviceStatus === '在线' ? '在线项圈' : '离线项圈',
+                itemStyle: {
+                    color: row.deviceStatus === '在线' ? '#90EE90' : '#CD5C5C'
+                }
+            };
+             });
+    // 初始化 项圈 
+    this.initCollarChart();
+        this.loading = false; // 数据加载完成后设置 loading 为 false
       }).catch(error => {
         console.error('获取数据出错：', error);
         this.loading = false; // 数据加载出错时也需要设置 loading 为 false
