@@ -340,7 +340,9 @@ export default {
     `;
 
     const infoWindow = new AMap.InfoWindow({
-      content: infoWindowContent
+      content: infoWindowContent,
+      offset: new AMap.Pixel(6, -30) // 向上移动 30 个像素
+
     });
 
     infoWindow.open(this.map, location);  

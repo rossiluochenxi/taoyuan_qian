@@ -162,7 +162,7 @@
 
 import drawMixin from "./drawMixin"; //自适应缩放
 import { listagroIndex, listagroRankingFarmers,dmAlarmDataIndexList,ebOnOffLineDevice,xqOnOffLineDevice} from "@/api/agroIndex/agroIndex";//首页品种数量
-
+import { listUser} from "@/api/agro/user";
 // import { formatTime } from "../utils/index.js"; //日期格式转换
 
 // 引入 ECharts
@@ -173,14 +173,16 @@ import { CanvasRenderer } from 'echarts/renderers';
 // 使用必要的组件
 echarts.use([PieChart, TooltipComponent, CanvasRenderer]);
  import chinamap from './china.json';
-// import chinamap from '@/views/china.json'
-
 export default {
   mixins: [drawMixin],
   name: 'PieChartExample',
   name: 'CollarChartExample',
   data() {
     return {
+      //centerl用户坐标
+      centerl: [],
+      //用户信息
+         userList: [],
       //左侧饼形图耳标在线数量
       chartData: [],
       //右侧饼形图项圈在线数量
@@ -371,20 +373,17 @@ export default {
     this.getDmAlarmDataIndexList();
     this.getebDeviceState();
     this.getxqDeviceState();
+    this.getUserList();
   },
 
   mounted() {
-
-
-  
-    // 假设在 mounted 钩子函数中获取后端数据，并赋值给 IndexVarList 数组
+ // 假设在 mounted 钩子函数中获取后端数据，并赋值给 IndexVarList 数组
     // this.fetchData();
     // //获取实时时间
     // this.timeFn();
     //加载loading图
     this.cancelLoading();
-    //中国地图
-    this.china_map();
+
     //中间折线图
     this.line_center_diagram();
     //虚线柱状图
@@ -396,6 +395,33 @@ export default {
     clearInterval(this.timing);
   },
   methods: {
+        /**
+          * 获取农户信息
+          */ 
+      getUserList(){
+        listUser().then( res => {
+          if( res.code != 200){ return this.message("系统错误,请重新查询") }
+          this.userList = res.rows
+          this.userList.forEach(user => {
+          const lon = parseFloat(user.lon); // 将经度字符串转换为浮点数
+          const lat = parseFloat(user.lat); // 将纬度字符串转换为浮点数
+          const userName =user.name
+              // 将经纬度数据添加到 this.centerl 数组中
+            this.centerl.push({userName:[userName],value: [lon, lat] });
+              //中国地图
+             this.china_map();
+          });
+
+            //获取设备数据
+            // this.getList();
+          // 在成功获取用户列表后再初始化地图
+          // this.initMap();
+
+
+          // console.log(this.userLis+"============"+ res.rows);
+       }
+         )
+    },
     //项圈在线数量
     initCollarChart() {
       // 基于准备好的dom，初始化echarts实例
@@ -639,7 +665,7 @@ export default {
               show: true, // 是否显示省份名字，现在是隐藏的状态，因为和散点图的名字重叠了。如果需要就true
               textStyle: {
                 //名字的样式
-                color: "#fff",
+                color: "#000080",
               },
             },
             emphasis: {
@@ -669,26 +695,21 @@ export default {
    
         series: [
           {
-             smooth: true,
-            symbol: "emptyCircle",
-            symbolSize: 8,
+            smooth: true,
+
+      // 这里将 require 的结果直接作为 symbol 的值
+            symbol: 'image://' + require('../assets/images/blue.png'),
+            symbolSize: 40,
             name: "在地图中显示散点图",
             type: "scatter",
             coordinateSystem: "geo", //设置坐标系为 geo
-            data: [
-              //这里放标注点的坐标[{name: "北京",value: [116.46, 39.92]}]
-              { name: "北京", value: [116.41995, 40.18994] },
-              { name: "郑州", value: [113.665412, 34.757975] },
-              { name: "天津", value: [117.205126, 39.034933] },
-              { name: "昆明", value: [102.81844, 24.906231] },
-              { name: "广州", value: [113.26453, 23.155008] },
-            ],
-               itemStyle: {
+            data: this.centerl,
+              itemStyle: {
               normal: {
-                color: "#fff",
+                color: "red",
               },
             },
-            //线的颜色样式
+            //线的颜色样式 
             lineStyle: {
               normal: {
                 color: this.colorList.linearBtoG,
@@ -701,6 +722,19 @@ export default {
                 color: this.colorList.areaBtoG,
               },
             },
+             label: {
+      show: true,
+      position: "right", // 文字显示在点的右侧
+      formatter: function(params) {
+        // 在这里设置需要显示的文字内容
+        return params.data.userName;
+      },
+      textStyle: {
+        color: '#fff',
+        fontSize: 12,
+        fontWeight: 'bold',
+      }
+    }
           },
         ],
       };
