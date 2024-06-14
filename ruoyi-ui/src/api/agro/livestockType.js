@@ -9,6 +9,15 @@ export function listLivestockType(query) {
   })
 }
 
+// 查询牲畜类型管理列表（不分页）
+export function listLivestockTypeQuery(query) {
+  return request({
+    url: '/agro/livestockType/listLivestockTypeQuery',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询牲畜类型管理详细
 export function getLivestockType(id) {
   return request({

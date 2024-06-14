@@ -381,9 +381,9 @@
 
 <script>
 import { listLivestock, getLivestock, delLivestock, addLivestock, updateLivestock } from "@/api/agro/livestock";
-import { listUser} from "@/api/agro/user";
-import { listLivestockType} from "@/api/agro/livestockType";
-import { listLivestockVarieties} from "@/api/agro/livestockVarieties";
+import { listUserQuery} from "@/api/agro/user";
+import { listLivestockTypeQuery} from "@/api/agro/livestockType";
+import { listLivestockVarietiesQuery} from "@/api/agro/livestockVarieties";
 
 export default {
   name: "Livestock",
@@ -670,7 +670,7 @@ export default {
           * 获取农户信息
           */
         getUserList(){
-        listUser().then( res => {
+          listUserQuery().then( res => {
             if( res.code != 200){ return this.message("系统错误,请重新查询") }
           this.userList = res.rows
           // console.log(this.userLis+"============"+ res.rows);
@@ -681,7 +681,7 @@ export default {
           * 获取牲畜类型信息
           */
         getlivestockTypeList(){
-        listLivestockType().then( res => {
+          listLivestockTypeQuery().then( res => {
             if( res.code != 200){ return this.message("系统错误,请重新查询") }
           this.livestockTypeList = res.rows
           // console.log(this.livestockTypeList+"============"+ res.rows);
@@ -692,7 +692,7 @@ export default {
           * 获取牲畜品种信息
           */
         getlivestockVarietiesList(){
-          listLivestockVarieties().then( res => {
+          listLivestockVarietiesQuery().then( res => {
             if( res.code != 200){ return this.message("系统错误,请重新查询") }
           this.livestockVarietiesList = res.rows
           // console.log(this.livestockVarietiesList+"============"+ res.rows);

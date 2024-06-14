@@ -9,6 +9,15 @@ export function listUser(query) {
   })
 }
 
+// 查询养殖户管理列表（不分页）
+export function listUserQuery(query) {
+  return request({
+    url: '/agro/user/listUserQuery',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询养殖户管理详细
 export function getUser(id) {
   return request({
